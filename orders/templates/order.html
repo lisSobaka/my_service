@@ -10,26 +10,7 @@
 <div class="order_containers">
 
     
-    <div class="order_containers-history">
-        <font size="5"><b>История: </b></font>
-        <hr>
-        <div class="scrollable">
-        {% for message in history %}
-            <b>{{ message.message }}</b> <br> 
-            <font size="2">{{ message.repairer.get_full_name }}</font> <br>
-            <font size="2">{{ message.date }}</font>
-            <hr>
-        {% endfor %}
-        </div>
 
-        <form method="POST" action="{% url 'add_history_message' order.pk %}">
-            {% csrf_token %}
-            {{ order_history_form.message }}
-            <br>
-            <input type="submit" value="Сохранить">
-        </form>
-        <hr>
-    </div>
 
 
 
@@ -43,17 +24,8 @@
         {% block popup %} {% endblock popup %}
 
         <h1> Заказ №{{order.id}}  </h1>
-        <h2> Прибыль с заказа:  {{order.get_finance_data.profit}} &#8381; | 
+        <h2> Прибыль с заказа:  X3 &#8381; | 
             
-        {% with client_debt=order.get_finance_data.client_debt %}
-            {% if client_debt < 0 %}
-                Клиент оплатил: {{client_debt|cut:"-"}} &#8381;  </h2>
-            {% elif client_debt == 0 %} 
-                Заказ оплачен!  </h2>
-            {% else %}
-                Клиент должен: {{client_debt}} &#8381;  </h2>
-            {% endif %}
-        {% endwith %}
 
         {% if works %}
             <button>
@@ -98,51 +70,8 @@
                 </tr>
             {% endfor %}
         </table>
-
-        <p><button><a href="{% url 'add_work' order.pk %}">Добавить услугу</a></button></p>
-
         <hr>
 
-        <h2>Платежи</h2>
-        <a name="payments"></a>
-        <table border="0" class="full_width">
-            <thead>
-                <th width=30%>Дата</th>
-                <th width=10%>Сумма</th>
-                <th width=25%>Описание</th>
-                <th width=25%>Сотрудник</th>
-                <th width=10%>Действия</th>
-            </thead>
-            
-            {% for payment in payments %}
-                <tr>
-                    <td>{{payment.date}}</td>
-                    <td>
-                        {% if payment.income != 0 %} 
-                            {{ payment.income }}
-                        {% else %} 
-                            {{payment.expense}}
-                        {% endif %}
-                    </td>
-                    <td>{{payment.get_payment_reason_display}}</td>
-                    <td>{{payment.repairer.get_full_name}}</td>
-                    <td> {% if perms.user.delete_finance %}
-                        <a href="{% url 'delete_payment' payment.id %}?order_id={{order.pk}}">&#10060;</a>
-                    {% endif %} </td>
-                    
-                </tr>
-            {% endfor %}
-        </table>
-
-
-        <p><button type="button"> 
-            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=prepayment">Добавить платёж</a> 
-        </button>
-        <button type="button"> 
-            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=refund">Возврат предоплаты</a> 
-        </button></p>
-
-        <hr>
 
         <h2>Информация</h2>
 
@@ -229,51 +158,6 @@
                 </table>
             </div>
 
-            <!-- ИНФОРМАЦИЯ О КЛИЕНТЕ -->
-            <div class="flexible_table_info-item">
-                <table>
-                    <thead>
-                        <th colspan="2" align="left"><h3>Информация о клиенте
-                            {% if perms.clients.change_client %}
-                                <button><a href="{% url 'edit_client' client.pk %}?order_id={{order.pk}}">&#9997;</a></button>
-                            {% endif %}
-                        </h3></th>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td width="220"> <b>ФИО</b> </td>
-                            <td>{{ client.name }}</td>
-                        </tr>
-                    
-                        <tr class="table_info">
-                            <td> <b>Номер телефона</b> </td>
-                            <td> <a href="tel:{{client.tel}}">{{client.tel}}</a> </td>
-                        </tr>
-                    
-                        <tr>
-                            <td> <b> E-mail </b> </td>
-                            <td> <a href="mailto:{{client.email}}">{{client.email}}</a> </td>
-                        </tr>
-                    
-                        <tr>
-                            <td> <b> Откуда узнал </b> </td>
-                            <td> {{client.source}} </td>
-                        </tr>
-                    
-                        <tr>
-                            <td> <b> Адрес </b> </td>
-                            <td> {{client.adress}} </td>
-                        </tr>
-                    
-                        <tr>
-                            <td> <b> Комментарий </b> </td>
-                            <td> {{client.comment_client}} </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 
 
 

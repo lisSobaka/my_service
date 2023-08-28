@@ -33,22 +33,22 @@ class Order(models.Model):
     #     return finance_data
     
 
-    # def get_order_data(self):
-    #     order_data = {}
-    #     order_data['order'] = self
-    #     order_data['client'] = order_data['order'].client
-    #     order_data['works'] = Works.objects.filter(order_id=order_data['order'].pk)
-    #     order_data['payments'] = Finance.objects.filter(order_id=order_data['order'].pk)
-    #     order_data['history'] = OrderHistory.objects.filter(order_id=order_data['order'].pk).order_by('-pk')
-    #     print('!!!!! ДАННЫЕ ИЗ БД !!!!!')
-    #     cache.set_many({
-    #         'order': order_data['order'],
-    #         'client': order_data['client'],
-    #         'works': order_data['works'],
-    #         'payments': order_data['payments'],
-    #         'history': order_data['history']
-    #     })
-    #     return order_data
+    def get_order_data(self):
+        order_data = {}
+        order_data['order'] = self
+        order_data['client'] = order_data['order'].client
+        order_data['works'] = Works.objects.filter(order_id=order_data['order'].pk)
+        order_data['payments'] = 111
+        order_data['history'] = OrderHistory.objects.filter(order_id=order_data['order'].pk).order_by('-pk')
+        print('!!!!! ДАННЫЕ ИЗ БД !!!!!')
+        cache.set_many({
+            'order': order_data['order'],
+            'client': order_data['client'],
+            'works': order_data['works'],
+            'payments': order_data['payments'],
+            'history': order_data['history']
+        })
+        return order_data
 
     def get_order_data_cached(self):
         order_data_cached = {}

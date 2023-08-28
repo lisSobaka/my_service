@@ -29,7 +29,7 @@ class OrderForm(forms.ModelForm):
                                                     'placeholder': 'price'}),
             'prepayment': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'prepayment'}),
-            'repairer': forms.Select(attrs={'class': 'text-field__input', 
+            'repairer': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'repairer'}),
             'note_hidden': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'note_hidden'}),
@@ -59,7 +59,7 @@ class WorkForm(forms.ModelForm):
                                                     'placeholder': 'discount'}),
             'quantity': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'quantity'}),
-            'repairer': forms.Select(attrs={'class': 'text-field__input', 
+            'repairer': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'repairer'}),
         }
 

@@ -12,9 +12,10 @@ from .forms import *
 
 
 
-class OrdersView(PermissionRequiredMixin, ListView):
-    permission_required = ('clients.view_order')
-    login_url = reverse_lazy('login')
+# class OrdersView(PermissionRequiredMixin, ListView):
+class OrdersView(ListView):
+    # permission_required = ('clients.view_order')
+    # login_url = reverse_lazy('login')
     model = Order
     template_name = 'orders.html'
     context_object_name = 'orders'
@@ -84,6 +85,7 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['order_form'] = OrderForm(initial={'repairer': self.request.user.id})
+        context['order_form'] = OrderForm(initial={'date_completion': datetime.now})
         print(self.request.user.last_login)
         return context
     
@@ -96,7 +98,7 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
             OrderHistory.objects.create(
                     message = 'Заказ создан!',
                     order_id = order.pk,
-                    repairer_id = self.request.user.pk
+                    repairer = order.repairer
                 )
             # if order.prepayment:
             #     payment = Finance()
