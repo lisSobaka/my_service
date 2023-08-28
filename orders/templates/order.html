@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Заказы{% endblock title %}
+
+
+{% block header %}{% endblock header %}
+{% block content%}    
+
+
+<div class="order_containers">
+
+    
+    <div class="order_containers-history">
+        <font size="5"><b>История: </b></font>
+        <hr>
+        <div class="scrollable">
+        {% for message in history %}
+            <b>{{ message.message }}</b> <br> 
+            <font size="2">{{ message.repairer.get_full_name }}</font> <br>
+            <font size="2">{{ message.date }}</font>
+            <hr>
+        {% endfor %}
+        </div>
+
+        <form method="POST" action="{% url 'add_history_message' order.pk %}">
+            {% csrf_token %}
+            {{ order_history_form.message }}
+            <br>
+            <input type="submit" value="Сохранить">
+        </form>
+        <hr>
+    </div>
+
+
+
+    <div class="order_containers-content">
+        {% if perms.clients.delete_order %}
+            <button><a href="{% url 'delete_order' order.pk %}">&#10060;</a></button>
+        {% endif %}
+
+
+        <script defer src="{% static 'js/popup.js' %}"></script>
+        {% block popup %} {% endblock popup %}
+
+        <h1> Заказ №{{order.id}}  </h1>
+        <h2> Прибыль с заказа:  {{order.get_finance_data.profit}} &#8381; | 
+            
+        {% with client_debt=order.get_finance_data.client_debt %}
+            {% if client_debt < 0 %}
+                Клиент оплатил: {{client_debt|cut:"-"}} &#8381;  </h2>
+            {% elif client_debt == 0 %} 
+                Заказ оплачен!  </h2>
+            {% else %}
+                Клиент должен: {{client_debt}} &#8381;  </h2>
+            {% endif %}
+        {% endwith %}
+
+        {% if works %}
+            <button>
+                <a href="{% url 'close_order' order.id %}">Закрыть заказ</a>
+            </button>
+        {% endif %}
+
+
+        <hr>
+        <h2>Услуги</h2>
+        <table class="full_width">
+            <thead>
+                <th width=5%>№</th>
+                <th>Название услуги</th>
+                <th width=8%>Стоимость</th>
+                <th width=8%>Себестоимость</th>
+                <th width=8%>Гарантия</th>
+                <th width=8%>Скидка</th>
+                <th width=5%>Кол-во</th>
+                <th>Исполнитель</th>
+                <th width=6%>Действия</th>
+            </thead>
+
+            {% for work in works %}
+                <tr class="selectable" onclick="document.location = '{{work.get_absolute_url}}';">
+                    <td>{{ work.id }}</td>
+                    <td>{{ work.work }}</td>
+                    <td>{{ work.price }}</td>
+                    <td>{{ work.cost }}</td>
+                    <td>{{ work.guarantee }}</td>
+                    <td>{{ work.discount }}</td>
+                    <td>{{ work.quantity }}</td>
+                    <td>{{ work.repairer.get_full_name }}</td>
+                    <td>{% if perms.clients.change_works %}
+                        <a href="{% url 'edit_work' work.order_id work.id %}">&#9997;</a>
+                    {% endif %} 
+                        
+                    {% if perms.clients.delete_works %}
+                        <a href="{% url 'delete_work' work.order_id work.id %}">&#10060;</a></td>
+                    {% endif %} 
+                        
+                </tr>
+            {% endfor %}
+        </table>
+
+        <p><button><a href="{% url 'add_work' order.pk %}">Добавить услугу</a></button></p>
+
+        <hr>
+
+        <h2>Платежи</h2>
+        <a name="payments"></a>
+        <table border="0" class="full_width">
+            <thead>
+                <th width=30%>Дата</th>
+                <th width=10%>Сумма</th>
+                <th width=25%>Описание</th>
+                <th width=25%>Сотрудник</th>
+                <th width=10%>Действия</th>
+            </thead>
+            
+            {% for payment in payments %}
+                <tr>
+                    <td>{{payment.date}}</td>
+                    <td>
+                        {% if payment.income != 0 %} 
+                            {{ payment.income }}
+                        {% else %} 
+                            {{payment.expense}}
+                        {% endif %}
+                    </td>
+                    <td>{{payment.get_payment_reason_display}}</td>
+                    <td>{{payment.repairer.get_full_name}}</td>
+                    <td> {% if perms.user.delete_finance %}
+                        <a href="{% url 'delete_payment' payment.id %}?order_id={{order.pk}}">&#10060;</a>
+                    {% endif %} </td>
+                    
+                </tr>
+            {% endfor %}
+        </table>
+
+
+        <p><button type="button"> 
+            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=prepayment">Добавить платёж</a> 
+        </button>
+        <button type="button"> 
+            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=refund">Возврат предоплаты</a> 
+        </button></p>
+
+        <hr>
+
+        <h2>Информация</h2>
+
+        <div class="flexible_table_info">
+            <!-- ИНФОРМАЦИЯ О ЗАКАЗЕ -->
+            <div class="flexible_table_info-item">
+                <table>
+                    <thead>
+                        <th colspan="2"><h3>Информация об устройстве</h3></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="220"> <b>Причина обращения</b> </td>
+                            <td>{{ order.whats_broken}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b>Тип устройства</b> </td>
+                            <td> {{order.device_type}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Производитель </b> </td>
+                            <td> {{order.device_brand}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Модель </b> </td>
+                            <td> {{order.device_model}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> IMEI </b> </td>
+                            <td> {{order.imei}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Комплектация </b> </td>
+                            <td> {{order.device_appearance}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Пароль </b> </td>
+                            <td> {{order.device_pass}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ О ЗАКАЗЕ -->
+            <div class="flexible_table_info-item">
+                <table>
+                    <thead>
+                        <th colspan="2"> <h3>Дополнительная информация
+                        {% if perms.clients.change_order %}
+                            <button><a href="{% url 'edit_order' order.pk %}">&#9997;</a></button>
+                        {% endif %}</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td> <b> Ориентировочная стоимость </b> </td>
+                            <td> {{order.price}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Заметки (клиент не видит) </b> </td>
+                            <td> {{order.note_hidden}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Заметки для клиента </b> </td>
+                            <td> {{order.note_client}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Предоплата </b> </td>
+                            <td> {{order.prepayment}} </td>
+                        </tr>
+                        <tr>
+                            <td> <b> Мастер </b> </td>
+                            <td> {{order.repairer.get_full_name}} </td>
+                        </tr>
+                        <tr>
+                            <tr>
+                                <td> <b> Дата создания </b> </td>
+                                <td> {{order.date_creation}} </td>
+                            </tr>
+                            <tr>
+                            <td> <b> Дата готовности </b> </td>
+                            <td> {{order.date_completion}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- ИНФОРМАЦИЯ О КЛИЕНТЕ -->
+            <div class="flexible_table_info-item">
+                <table>
+                    <thead>
+                        <th colspan="2" align="left"><h3>Информация о клиенте
+                            {% if perms.clients.change_client %}
+                                <button><a href="{% url 'edit_client' client.pk %}?order_id={{order.pk}}">&#9997;</a></button>
+                            {% endif %}
+                        </h3></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="220"> <b>ФИО</b> </td>
+                            <td>{{ client.name }}</td>
+                        </tr>
+                    
+                        <tr class="table_info">
+                            <td> <b>Номер телефона</b> </td>
+                            <td> <a href="tel:{{client.tel}}">{{client.tel}}</a> </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> E-mail </b> </td>
+                            <td> <a href="mailto:{{client.email}}">{{client.email}}</a> </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Откуда узнал </b> </td>
+                            <td> {{client.source}} </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Адрес </b> </td>
+                            <td> {{client.adress}} </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Комментарий </b> </td>
+                            <td> {{client.comment_client}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock content %}

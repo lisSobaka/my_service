@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/table.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/popup.css' %}" />
+
+    <title>{% block title %}Default title{% endblock title %}</title>
+    {% block head %} {% endblock head %}
+</head>
+
+
+<body>
+    <div>
+        <a href="{% url 'orders' %}">Главная</a> |
+        <a href="{% url 'clients' %}">Клиенты</a> |
+        <a href="{% url 'payments' %}">Платежи</a> |
+        <a href="{% url 'main_salary' %}">ЗП</a> |
+        <a href="{% url 'create_order' %}"><b>Новый заказ</b></a> |
+        <a href="{% url 'test' %}"><b>Хуйня всякая</b></a> |
+
+        {% if request.user.is_authenticated %}
+            <div class="last"> 
+            {% if request.user.is_superuser %}
+                <a href="/admin/">Админочка</a>
+            {% endif %}
+            Привет, {{ request.user.username }} |
+            <a href="{% url 'logout' %}">Выйти</a>   </div>        
+        {% else %}
+            <div class="last"><a href="{% url 'login' %}"><b>Войти</b></a> |
+            <a href="{% url 'register' %}"><b>Регистрация</b></a></div>
+        {% endif %}
+    </div>
+    <hr>
+
+    <h1>{% block header %}{% endblock header %}</h1>
+    <div>{% block content%}{% endblock content %}</div>
+
+<!-- Пагинация -->
+<span>
+    {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; Первая</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+    <span>
+        {% for page in paginator.page_range %}
+            {% if page_obj.number == page %}
+                <b> {{page}} </b>
+            {% elif page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
+                <a href="?page={{page}}">{{page}}</a>
+            {% endif %}
+        {% endfor %}
+    </span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперёд</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+    {% endif %}
+</span>
+
+</body>
+</html>
