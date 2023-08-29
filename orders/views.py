@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.forms import Form
+from clients.forms import *
 from .models import *
 from .forms import *
 
@@ -84,6 +85,7 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['client_form'] = ClientForm()
         context['order_form'] = OrderForm(initial={'repairer': self.request.user.id})
         context['order_form'] = OrderForm(initial={'date_completion': datetime.now})
         print(self.request.user.last_login)
@@ -91,9 +93,11 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
     
     def post(self, request):
         order_form = OrderForm(request.POST)
-        if order_form.is_valid():
+        client_form = ClientForm(request.POST)
+        if client_form.is_valid() and order_form.is_valid():
+            client = client_form.save()
             order = order_form.save(commit=False)
-            order.client_id = 'Иван сидорович'
+            order.client_id = client.pk
             order.save()
             OrderHistory.objects.create(
                     message = 'Заказ создан!',

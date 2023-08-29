@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Клиенты{% endblock title %}
+{% block header %}Клиенты{% endblock header %}
+
+{% block content%}
+
+{% block popup %} {% endblock popup %}
+
+<table class="full_width">
+    <thead>
+        <th>№</th>
+        <th>ФИО клиента</th>
+        <th>Номер телефона</th>
+        <th>E-mail</th>
+        <th>Адрес</th>
+        <th>Комментарий</th>
+        <th>Источник</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+    </thead>
+    
+
+
+
+    {% for client in clients %}
+        <tbody>
+            <tr>
+                <td>{{ client.id }}</td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.tel }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.adress }}</td>
+                <td>{{ client.comment_client }}</td>
+                <td>{{ client.source }}</td>
+                <td> {% if perms.clients.change_client %}
+                    <a href="{% url 'edit_client' client.id %}"> Изменить </a>
+                {% endif %}
+                </td>
+                <td>
+                {% if perms.clients.delete_client %}
+                    <a href="{% url 'clients' %}?action=client_delete&client_id={{client.id}}"> Удалить </a>
+                {% endif %}
+                 </td>
+            </tr>
+        </tbody>
+    {% endfor %}
+</table>
+{% endblock content %}

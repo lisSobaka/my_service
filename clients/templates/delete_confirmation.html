@@ -1,0 +1,17 @@
+{% extends main_page %}
+
+{% block popup %}
+
+<div class="popup open">
+    <div class="popup__box">
+        <h2>Рил удалить?</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <input class="form_button" type="submit" value="Да, рил"> <br>
+            <button type="button" class="form_button"><a href={{cancel_button}}>Передумал</a></button>
+        </form>
+    </div>
+</div>
+{% endblock popup %}
