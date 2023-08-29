@@ -1,0 +1,75 @@
+table {
+    border-collapse: collapse;
+    box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.068);
+}
+
+table.full_width {
+    table-layout: fixed;
+    width: 100%;
+}
+
+
+table.test_table{
+    position: fixed;
+    border: #a7a7a7;
+    table-layout: fixed;
+    width: 100%;
+    height: calc(100vh - 90px) ;
+
+}
+
+
+table.test_table .ch1{
+    height: 10%;
+}
+table.test_table .ch2{
+    height: 80%;
+}
+table.test_table .ch3{
+    height: 10%;
+}
+
+td.test_table th:nth-child(1) {height: 10%;}
+td.test_table th:nth-child(2) {height: 80%;}
+td.test_table th:nth-child(3) {height: 10%;}
+
+/* thead.payments th:nth-child(1) {width: 20%;}
+thead.payments th:nth-child(2) {width: 10%;}
+thead.payments th:nth-child(3) {width: 15%;}
+thead.payments th:nth-child(4) {width: 20%;}
+thead.payments th:nth-child(5) {width: 10%;}
+thead.payments th:nth-child(6) {width: 10%;}
+thead.payments th:nth-child(7) {width: 10%;} */
+
+thead.orders th:nth-child(1) {width: 3%;}
+thead.orders th:nth-child(2) {width: 15%;}
+thead.orders th:nth-child(3) {width: 10%;}
+thead.orders th:nth-child(4) {width: 10%;}
+thead.orders th:nth-child(5) {width: 10%;}
+thead.orders th:nth-child(6) {width: 10%;}
+thead.orders th:nth-child(7) {width: 10%;}
+thead.orders th:nth-child(8) {width: 10%;}
+thead.orders th:nth-child(9) {width: 10%;}
+
+th {
+    /*background-color: #d4c8da;*/
+    background: linear-gradient(rgba(61, 61, 190, 0.158), rgba(142, 15, 180, 0.089));
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: left;
+}
+
+tr {
+    padding: 5px;
+    background-color: #ffffff;
+    border-bottom: dotted;
+    border-color: #a7a7a7;
+    border-width: 1px;
+}
+
+td {
+    padding: 10px;
+}
+
+tr.selectable:hover {background: linear-gradient(to right, rgba(0, 0, 255, 0.151), rgba(255, 222, 228, 0.144));}

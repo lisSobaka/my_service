@@ -1,0 +1,22 @@
+{% extends "order.html" %}
+
+
+{% block popup %} 
+
+<div class="popup open">
+    <div class="popup__box">
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <p><label for="field.id_for_label">{{ field.label }}</label> <br>{{ field }}</p>
+                {{field.errors}}
+            {% endfor %}
+
+            <input type="submit" value="Сохранить услугу">
+            <button type="button"><a href="{% url 'order' order.pk %}">Передумал</a></button>
+        </form>
+    </div>
+</div>
+
+{% endblock popup %}
