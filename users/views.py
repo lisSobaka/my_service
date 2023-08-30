@@ -9,7 +9,7 @@ from django.urls import reverse_lazy
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'register.html'
-    success_url = reverse_lazy('orders')
+    success_url = 'register_success.html'
 
     def post(self, request, **kwargs):
         form = RegisterUserForm(request.POST)
@@ -17,11 +17,12 @@ class RegisterUser(CreateView):
             user = form.save(commit=False)
             user.is_active = False
             user.save()
+            Group.objects.get_or_create(name='Repairer')
             user.groups.add(Group.objects.get(name='Repairer'))
 
             # login(request, user)
 
-            return render(request, 'register_success.html')
+            return render(request, self.success_url)
         
         context = {'form': form}
         return render (request, self.template_name, context)
