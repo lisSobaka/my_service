@@ -56,7 +56,7 @@ ROOT_URLCONF = 'my_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['my_service/templates/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
