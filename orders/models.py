@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from datetime import datetime
 from django.core.cache import cache
+from clients.models import Client
 
 
     
@@ -62,7 +63,7 @@ class Order(models.Model):
             order_data_cached = self.get_order_data()
         return order_data_cached
 
-    client = models.CharField(max_length=50, verbose_name='Клиент')
+    client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name='Клиент')
     repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
     whats_broken = models.CharField(max_length=50, verbose_name='Неисправность')
     device_appearance = models.CharField(max_length=80, blank=True, 

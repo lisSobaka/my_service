@@ -158,6 +158,52 @@
                 </table>
             </div>
 
+            <!-- ИНФОРМАЦИЯ О КЛИЕНТЕ -->
+            <div class="flexible_table_info-item">
+                <table>
+                    <thead>
+                        <th colspan="2" align="left"><h3>Информация о клиенте
+                            {% if perms.clients.change_client %}
+                                <button><a href="{% url 'edit_client' client.pk %}?order_id={{order.pk}}">&#9997;</a></button>
+                            {% endif %}
+                        </h3></th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td width="220"> <b>ФИО</b> </td>
+                            <td>{{ client.name }}</td>
+                        </tr>
+                    
+                        <tr class="table_info">
+                            <td> <b>Номер телефона</b> </td>
+                            <td> <a href="tel:{{client.tel}}">{{client.tel}}</a> </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> E-mail </b> </td>
+                            <td> <a href="mailto:{{client.email}}">{{client.email}}</a> </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Откуда узнал </b> </td>
+                            <td> {{client.source}} </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Адрес </b> </td>
+                            <td> {{client.adress}} </td>
+                        </tr>
+                    
+                        <tr>
+                            <td> <b> Комментарий </b> </td>
+                            <td> {{client.comment_client}} </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 
 
 

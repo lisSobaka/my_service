@@ -1,0 +1,35 @@
+{% extends template_name %}
+{% block popup %}
+    
+{% if perms.clients.change_client %}
+    <div class="popup open" id="edit_client_popup">
+        <div class="popup__box">
+            <h2>Изменение карточки клиента <br>{{client.name}} </h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="textcols">
+                    <div class="textcols.item">
+                        <h3><label>Информация о клиенте</label></h3>
+                        {% for field in form %}
+                        <div class="text-field text-field_floating">
+                        {{ field }}
+                                <label for="form.id_for_label" class="text-field__label">{{ field.label }}</label>
+                            </div>
+                            <div class="error_message">{{ field.errors }}</div>
+                        {% endfor %}
+                    <input type="submit" value="Сохранить" class="form_button">
+                    {% if template_name == 'order.html' %}
+                        <button class="form_button"><a href="{% url 'order' order.pk %}"> Передумал </a></button>
+                    {% elif template_name == 'clients.html' %}
+                        <button class="form_button"><a href="{% url 'clients' %}"> Передумал </a></button>
+                    {% endif %}
+                    
+                    
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock popup %}
