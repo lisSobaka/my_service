@@ -179,7 +179,7 @@ class PaymentsView(ListView):
     ordering = ['-pk']
     model = Payments
     template_name = 'payments.html'
-    context_object_name = 'finance'
+    context_object_name = 'payments'
 
     
 class DeletePayment(PermissionRequiredMixin, DeleteView):
@@ -230,3 +230,16 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
         #     repairer_id = self.request.user.pk
         # )
         return super().form_valid(form)
+
+
+
+def add_history_message(request, order_id):
+    if request.method == 'POST':
+        message_form = OrderHistoryForm(request.POST)
+        if message_form.is_valid():
+            message = message_form.save(commit=False)
+            message.order_id = order_id
+            # message.repairer_id = request.user.pk
+            message.save()
+    return redirect('order', order_id)
+

@@ -10,7 +10,26 @@
 <div class="order_containers">
 
     
+    <div class="order_containers-history">
+        <font size="5"><b>История: </b></font>
+        <hr>
+        <div class="scrollable">
+        {% for message in history %}
+            <b>{{ message.message }}</b> <br> 
+            <font size="2">{{ message.repairer.get_full_name }}</font> <br>
+            <font size="2">{{ message.date }}</font>
+            <hr>
+        {% endfor %}
+        </div>
 
+        <form method="POST" action="{% url 'add_history_message' order.pk %}">
+            {% csrf_token %}
+            {{ order_history_form.message }}
+            <br>
+            <input type="submit" value="Сохранить">
+        </form>
+        <hr>
+    </div>
 
 
 
