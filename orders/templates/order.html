@@ -70,6 +70,51 @@
                 </tr>
             {% endfor %}
         </table>
+
+        
+        <hr>
+
+
+        <h2>Платежи</h2>
+        <a name="payments"></a>
+        <table border="0" class="full_width">
+            <thead>
+                <th width=30%>Дата</th>
+                <th width=10%>Сумма</th>
+                <th width=25%>Описание</th>
+                <th width=25%>Сотрудник</th>
+                <th width=10%>Действия</th>
+            </thead>
+            
+            {% for payment in payments %}
+                <tr>
+                    <td>{{payment.date}}</td>
+                    <td>
+                        {% if payment.income != 0 %} 
+                            {{ payment.income }}
+                        {% else %} 
+                            {{payment.expense}}
+                        {% endif %}
+                    </td>
+                    <td>{{payment.get_payment_reason_display}}</td>
+                    <td>{{payment.repairer.get_full_name}}</td>
+                    <td> {% if perms.user.delete_finance %}
+                        <a href="{% url 'delete_payment' payment.id %}?order_id={{order.pk}}">&#10060;</a>
+                    {% endif %} </td>
+                    
+                </tr>
+            {% endfor %}
+        </table>
+
+
+        <p><button type="button"> 
+            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=prepayment">Добавить платёж</a> 
+        </button>
+        <button type="button"> 
+            <a href="{% url 'add_payment' %}?order_id={{order.pk}}&type=refund">Возврат предоплаты</a> 
+        </button></p>
+
+        
         <hr>
 
 

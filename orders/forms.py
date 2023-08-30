@@ -72,3 +72,27 @@ class OrderHistoryForm(forms.ModelForm):
             'message': forms.Textarea(attrs={'class': 'order_containers-history history_message',
                                              'rows': 5})
         }
+
+
+class PaymentsIncomeForm(forms.ModelForm):
+    class Meta:
+        model = Payments
+        fields = ['income', 'comment']
+        widgets = {
+            'income': forms.NumberInput(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'income'}),
+            'comment': forms.TextInput(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'comment'})
+        }
+
+
+class PaymentsExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Payments
+        fields = ['expense', 'comment']
+        widgets = {
+            'expense': forms.NumberInput(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'expense'}),
+            'comment': forms.TextInput(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'comment'})
+        }

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Платежи{% endblock title %}
+{% block header %}Платежи{% endblock header %}
+
+<div>
+    {% block content%}
+
+    {% block popup %}{% endblock popup %}
+
+    <h2>Общий доход: {{finance_sum.all_income}} | 
+        Общий расход: {{finance_sum.all_expense}} | 
+        Профит: {{finance_sum.all_profit}}</h2>
+    
+    <table class="payments full_width">
+        <thead class="payments">
+            <th width="15%">Дата</th>
+            <th width="5%">Приход</th>
+            <th width="5%">Расход</th>
+            <th width="5%">№ заказа</th>
+            <th width="15%">Основание</th>
+            <th width="15%">Сотрудник</th>
+            <th width="15%">Описание</th>
+            <th width="5%">Удалить</th>
+        </thead>
+
+        <tbody>
+            {% for payment in payments %}
+            <tr>
+                <td>{{payment.date}}</td>
+                <td>{{payment.income}}</td>
+                <td>{{payment.expense}}</td>
+                <td>{% if payment.order.id %}
+                    <a href="{% url 'order' payment.order.id %}">{{payment.order.id}}</a>
+                {% endif %}</td>
+                
+                <td>{{payment.get_payment_reason_display}}</td>
+                <td>{{payment.repairer.get_full_name}}</td>
+                <td>{{payment.comment}}</td>
+                <td> <a href="{% url 'delete_payment' payment.id %}">&#10060;</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endblock content %}
+</div>
+
+<!-- <tr class="selectable" onclick="document.location = '{% url 'orders' %}?action=show&order_id={{payment.order}}';"> -->

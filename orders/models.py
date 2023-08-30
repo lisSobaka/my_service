@@ -39,7 +39,7 @@ class Order(models.Model):
         order_data['order'] = self
         order_data['client'] = order_data['order'].client
         order_data['works'] = Works.objects.filter(order_id=order_data['order'].pk)
-        order_data['payments'] = 111
+        order_data['payments'] = Payments.objects.filter(order_id=order_data['order'].pk)
         order_data['history'] = OrderHistory.objects.filter(order_id=order_data['order'].pk).order_by('-pk')
         print('!!!!! ДАННЫЕ ИЗ БД !!!!!')
         cache.set_many({
@@ -113,3 +113,26 @@ class OrderHistory(models.Model):
     repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
     date = models.DateTimeField(default=datetime.now())
     message = models.CharField(max_length=200, verbose_name='Сообщение')
+
+
+class Payments(models.Model):
+    PAYMENT_REASONS = (
+        ('PREPAYMENT', 'Предоплата'),
+        ('ORDER_PAYMENT', 'Оплата заказа'),
+        ('REFUND', 'Возврат предоплаты'),
+        ('SALARY_PAYOUT', 'Выплата заработной платы'),
+    )
+
+    # def get_absolute_url(self):
+    #     return reverse('payments/', kwargs={'pk': self.pk})
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True, 
+                                verbose_name='Заказ')
+    # repairer = models.ForeignKey(Repairer, on_delete=models.DO_NOTHING, null=True, blank=True, 
+    #                             verbose_name='Исполнитель')
+    payment_reason = models.CharField(max_length=30, verbose_name='Тип платежа',
+                                    choices=PAYMENT_REASONS)
+    date = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')
+    income = models.IntegerField(null=True, default=0, verbose_name='Приход')
+    expense = models.IntegerField(null=True, default=0, verbose_name='Расход')
+    comment = models.CharField(max_length=30, verbose_name='Комментарий', blank=True, default='')
