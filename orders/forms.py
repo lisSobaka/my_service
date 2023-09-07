@@ -7,7 +7,7 @@ class OrderForm(forms.ModelForm):
         model = Order
         fields = ['whats_broken', 'device_appearance', 'device_type', 'imei', 'device_brand',
                   'device_model', 'device_kit', 'device_pass', 'price', 'prepayment',
-                  'repairer', 'note_hidden', 'note_client', 'date_completion']
+                  'employee', 'note_hidden', 'note_client', 'date_completion']
         widgets = {
             'whats_broken': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'whats_broken'}),
@@ -29,8 +29,8 @@ class OrderForm(forms.ModelForm):
                                                     'placeholder': 'price'}),
             'prepayment': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'prepayment'}),
-            'repairer': forms.TextInput(attrs={'class': 'text-field__input', 
-                                                    'placeholder': 'repairer'}),
+            'employee': forms.Select(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'employee'}),
             'note_hidden': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'note_hidden'}),
             'note_client': forms.TextInput(attrs={'class': 'text-field__input', 
@@ -43,7 +43,7 @@ class OrderForm(forms.ModelForm):
 class WorkForm(forms.ModelForm):
     class Meta:
         model = Works
-        fields = ['work', 'price', 'cost', 'guarantee', 'discount', 'quantity', 'repairer']
+        fields = ['work', 'price', 'cost', 'guarantee', 'discount', 'quantity', 'employee']
         widgets = {
             'order': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'order'}),
@@ -59,8 +59,8 @@ class WorkForm(forms.ModelForm):
                                                     'placeholder': 'discount'}),
             'quantity': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'quantity'}),
-            'repairer': forms.TextInput(attrs={'class': 'text-field__input', 
-                                                    'placeholder': 'repairer'}),
+            'employee': forms.TextInput(attrs={'class': 'text-field__input', 
+                                                    'placeholder': 'employee'}),
         }
 
 

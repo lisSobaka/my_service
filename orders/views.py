@@ -13,10 +13,9 @@ from .forms import *
 
 
 
-# class OrdersView(PermissionRequiredMixin, ListView):
-class OrdersView(ListView):
-    # permission_required = ('clients.view_order')
-    # login_url = reverse_lazy('login')
+class OrdersView(PermissionRequiredMixin, ListView):
+    permission_required = 'orders.view_order'
+    login_url = reverse_lazy('login')
     model = Order
     template_name = 'orders.html'
     context_object_name = 'orders'
@@ -32,7 +31,7 @@ class OrdersView(ListView):
 
 
 class OrderDetail(PermissionRequiredMixin, DetailView):
-    permission_required = ('clients.view_order')
+    permission_required = 'orders.view_order'
     login_url = reverse_lazy('login')
     model = Order
     template_name = 'order.html'
@@ -49,7 +48,9 @@ class OrderDetail(PermissionRequiredMixin, DetailView):
         return context
 
 
-class DeleteOrder(DeleteView):
+class DeleteOrder(PermissionRequiredMixin, DeleteView):
+    permission_required = 'orders.delete_order'
+    login_url = reverse_lazy('login')
     model = Order
     pk_url_kwarg = 'order_id'
     template_name = 'delete_confirmation.html'
@@ -63,7 +64,9 @@ class DeleteOrder(DeleteView):
         return context
 
 
-class EditOrder(UpdateView):
+class EditOrder(PermissionRequiredMixin, UpdateView):
+    permission_required = 'orders.change_order'
+    login_url = reverse_lazy('login')
     model = Order
     form_class = OrderForm
     template_name = 'edit_order.html'
@@ -79,16 +82,15 @@ class EditOrder(UpdateView):
     
 
 class CreateOrder(PermissionRequiredMixin, TemplateView):
-    template_name = 'order_new.html'
-    permission_required = ('clients.add_client', 'clients.add_order')
+    permission_required = ('clients.add_client', 'orders.add_order')
     login_url = reverse_lazy('login')
+    template_name = 'order_new.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['client_form'] = ClientForm()
-        context['order_form'] = OrderForm(initial={'repairer': self.request.user.id})
-        context['order_form'] = OrderForm(initial={'date_completion': datetime.now})
-        print(self.request.user.last_login)
+        context['order_form'] = OrderForm(initial={'employee': self.request.user.id, 'date_completion': datetime.now})
+        print(self.request.user.id)
         return context
     
     def post(self, request):
@@ -102,33 +104,32 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
             OrderHistory.objects.create(
                     message = 'Заказ создан!',
                     order_id = order.pk,
-                    repairer = order.repairer
+                    employee = order.employee
                 )
-            # if order.prepayment:
-            #     payment = Finance()
-            #     payment.date = datetime.now()
-            #     payment.income = order.prepayment
-            #     payment.payment_reason = 'PREPAYMENT'
-            #     payment.order_id = order.id
-            #     payment.repairer_id = order.repairer_id
-            #     payment.save()            
+            if order.prepayment:
+                payment = Payments()
+                payment.date = datetime.now()
+                payment.income = order.prepayment
+                payment.payment_reason = 'PREPAYMENT'
+                payment.order_id = order.id
+                payment.employee_id = order.employee_id
+                payment.save()            
                 
-            #     OrderHistory.objects.create(
-            #             message = 'Добавлена предоплата: ' + str(payment.income) + '  руб.',
-            #             order_id = order.pk,
-            #             repairer_id = self.request.user.pk
-            #     )
-                
-
+                OrderHistory.objects.create(
+                        message = 'Добавлена предоплата: ' + str(payment.income) + '  руб.',
+                        order_id = order.pk,
+                        employee_id = self.request.user.pk
+                )
             return HttpResponseRedirect(order.get_absolute_url())
-
         context = {
             'order_form': OrderForm(request.POST)
         }
         return render(request, "order_new.html", context)
     
 
-class AddPayment(CreateView):
+class AddPayment(PermissionRequiredMixin, CreateView):
+    permission_required = 'orders.create_payment'
+    login_url = reverse_lazy('login')
     model = Payments
     template_name = 'add_payment.html'
     
@@ -150,7 +151,7 @@ class AddPayment(CreateView):
     def form_valid(self, form):
         success_url = reverse_lazy('payments')
         payment = form.save(commit=False)
-        # payment.repairer_id = self.request.user.id
+        payment.employee_id = self.request.user.id
         payment.expense = -payment.expense
         payment.payment_reason = self.request.GET.get('type').upper()
 
@@ -168,14 +169,16 @@ class AddPayment(CreateView):
             OrderHistory.objects.create(
                 message = history_message,
                 order_id = payment.order_id,
-                # repairer_id = self.request.user.pk
+                employee_id = self.request.user.pk
             )
         payment.save()
 
         return HttpResponseRedirect(success_url)
 
 
-class PaymentsView(ListView):
+class PaymentsView(PermissionRequiredMixin, ListView):
+    permission_required = 'orders.view_payments'
+    login_url = reverse_lazy('login')
     ordering = ['-pk']
     model = Payments
     template_name = 'payments.html'
@@ -183,7 +186,8 @@ class PaymentsView(ListView):
 
     
 class DeletePayment(PermissionRequiredMixin, DeleteView):
-    permission_required = 'clients.delete_finance'
+    permission_required = 'orders.delete_payments'
+    login_url = reverse_lazy('login')
     model = Payments
     template_name = 'delete_confirmation.html'
     pk_url_kwarg = 'payment_id'
@@ -224,11 +228,11 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
                     work.paid_by_client = False
                     work.save()
 
-        # OrderHistory.objects.create(
-        #     message = history_message,
-        #     order_id = payment.order_id,
-        #     repairer_id = self.request.user.pk
-        # )
+        OrderHistory.objects.create(
+            message = history_message,
+            order_id = payment.order_id,
+            employee_id = self.request.user.pk
+        )
         return super().form_valid(form)
 
 
@@ -239,7 +243,7 @@ def add_history_message(request, order_id):
         if message_form.is_valid():
             message = message_form.save(commit=False)
             message.order_id = order_id
-            # message.repairer_id = request.user.pk
+            message.employee_id = request.user.pk
             message.save()
     return redirect('order', order_id)
 

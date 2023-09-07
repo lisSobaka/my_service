@@ -3,6 +3,7 @@ from django.urls import reverse
 from datetime import datetime
 from django.core.cache import cache
 from clients.models import Client
+from users.models import Employees
 
 
     
@@ -64,7 +65,8 @@ class Order(models.Model):
         return order_data_cached
 
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name='Клиент')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     whats_broken = models.CharField(max_length=50, verbose_name='Неисправность')
     device_appearance = models.CharField(max_length=80, blank=True, 
                                          default='', verbose_name='Состояние')
@@ -97,7 +99,8 @@ class Works(models.Model):
         return reverse('edit_work', kwargs={'order_id': self.order_id, 'work_id': self.pk})
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     payment = models.IntegerField(default=0, blank=True, verbose_name='Платёж')
     work = models.CharField(max_length=50, verbose_name='Название услуги')
     price = models.IntegerField(verbose_name='Стоимость')
@@ -110,7 +113,8 @@ class Works(models.Model):
 
 class OrderHistory(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     date = models.DateTimeField(default=datetime.now())
     message = models.CharField(max_length=200, verbose_name='Сообщение')
 
@@ -128,8 +132,8 @@ class Payments(models.Model):
     
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True, 
                                 verbose_name='Заказ')
-    # repairer = models.ForeignKey(Repairer, on_delete=models.DO_NOTHING, null=True, blank=True, 
-    #                             verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     payment_reason = models.CharField(max_length=30, verbose_name='Тип платежа',
                                     choices=PAYMENT_REASONS)
     date = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')

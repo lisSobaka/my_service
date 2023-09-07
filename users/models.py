@@ -11,7 +11,7 @@ class Employees(AbstractUser):
         return full_name
 
     # def get_salary_data(self):
-    #     unpaid_services = Salary.objects.filter(repairer_id=self.pk) & Salary.objects.filter(paid_for_repairer=0)
+    #     unpaid_services = Salary.objects.filter(employee_id=self.pk) & Salary.objects.filter(paid_for_employee=0)
     #     salary = unpaid_services.aggregate(Sum('amount'))['amount__sum']
     #     if not salary:
     #         salary = 0

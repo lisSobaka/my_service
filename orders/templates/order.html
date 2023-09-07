@@ -16,7 +16,7 @@
         <div class="scrollable">
         {% for message in history %}
             <b>{{ message.message }}</b> <br> 
-            <font size="2">{{ message.repairer.get_full_name }}</font> <br>
+            <font size="2">{{ message.employee.get_full_name }}</font> <br>
             <font size="2">{{ message.date }}</font>
             <hr>
         {% endfor %}
@@ -77,7 +77,7 @@
                     <td>{{ work.guarantee }}</td>
                     <td>{{ work.discount }}</td>
                     <td>{{ work.quantity }}</td>
-                    <td>{{ work.repairer.get_full_name }}</td>
+                    <td>{{ work.employee.get_full_name }}</td>
                     <td>{% if perms.clients.change_works %}
                         <a href="{% url 'edit_work' work.order_id work.id %}">&#9997;</a>
                     {% endif %} 
@@ -116,7 +116,7 @@
                         {% endif %}
                     </td>
                     <td>{{payment.get_payment_reason_display}}</td>
-                    <td>{{payment.repairer.get_full_name}}</td>
+                    <td>{{payment.employee.get_full_name}}</td>
                     <td> {% if perms.user.delete_finance %}
                         <a href="{% url 'delete_payment' payment.id %}?order_id={{order.pk}}">&#10060;</a>
                     {% endif %} </td>
@@ -207,7 +207,7 @@
                         </tr>
                         <tr>
                             <td> <b> Мастер </b> </td>
-                            <td> {{order.repairer.get_full_name}} </td>
+                            <td> {{order.employee.get_full_name}} </td>
                         </tr>
                         <tr>
                             <tr>
