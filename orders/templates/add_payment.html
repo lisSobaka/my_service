@@ -1,0 +1,25 @@
+{% extends "order.html" %}
+{% block popup %}
+
+{% if perms.clients.change_client %}
+    <div class="popup open">
+        <div class="popup__box">
+            <h2>Добавление платежа</h2>
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="text-field text-field_floating">
+                    {{ field }}
+                    <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
+                </div>
+                    <div class="error_message">{{field.errors}}</div>
+                {% endfor %}
+            
+                <input class="form_button" type="submit" value="Добавить платёж"><br>
+                <button class="form_button"><a href="{% url 'order' order.pk %}">Передумал</a></button>
+            </form>
+        </div>
+    </div>
+{% endif %}
+{% endblock popup %}
+

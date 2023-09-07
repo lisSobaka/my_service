@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+
+{% block content%}
+Пользователь: {{user}}
+
+<form method="post">
+    {% csrf_token %}    
+    {{ form.non_field_errors }}
+    {% for field in form %}
+        <p><label for="field.id_for_label" class="auth_form_label">{{field.label}}</label> {{ field }}</p>
+        {{ field.errors }}
+    {% endfor %}
+    <button type="submit">Войти</button>
+</form>
+
+{% endblock %}

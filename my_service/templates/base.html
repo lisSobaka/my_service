@@ -20,6 +20,7 @@
     <div>
         <a href="{% url 'orders' %}">Главная</a> |
         <a href="{% url 'clients' %}">Клиенты</a> |
+        <a href="{% url 'payments' %}">Платежи</a> |
         <a href="{% url 'create_order' %}"><b>Новый заказ</b></a> |
 
         {% if request.user.is_authenticated %}
@@ -27,6 +28,11 @@
             {% if request.user.is_superuser %}
                 <a href="/admin/">Админочка</a>
             {% endif %}
+            Привет, {{ request.user.username }} |
+            <a href="{% url 'logout' %}">Выйти</a>   </div>        
+        {% else %}
+            <div class="last"><a href="{% url 'login' %}"><b>Войти</b></a> |
+            <a href="{% url 'register' %}"><b>Регистрация</b></a></div>
         {% endif %}
     </div>
     <hr>

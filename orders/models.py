@@ -3,6 +3,7 @@ from django.urls import reverse
 from datetime import datetime
 from django.core.cache import cache
 from clients.models import Client
+from users.models import Employees
 
 
     
@@ -39,7 +40,7 @@ class Order(models.Model):
         order_data['order'] = self
         order_data['client'] = order_data['order'].client
         order_data['works'] = Works.objects.filter(order_id=order_data['order'].pk)
-        order_data['payments'] = 111
+        order_data['payments'] = Payments.objects.filter(order_id=order_data['order'].pk)
         order_data['history'] = OrderHistory.objects.filter(order_id=order_data['order'].pk).order_by('-pk')
         print('!!!!! ДАННЫЕ ИЗ БД !!!!!')
         cache.set_many({
@@ -64,7 +65,8 @@ class Order(models.Model):
         return order_data_cached
 
     client = models.ForeignKey(Client, on_delete=models.PROTECT, verbose_name='Клиент')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     whats_broken = models.CharField(max_length=50, verbose_name='Неисправность')
     device_appearance = models.CharField(max_length=80, blank=True, 
                                          default='', verbose_name='Состояние')
@@ -97,7 +99,8 @@ class Works(models.Model):
         return reverse('edit_work', kwargs={'order_id': self.order_id, 'work_id': self.pk})
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     payment = models.IntegerField(default=0, blank=True, verbose_name='Платёж')
     work = models.CharField(max_length=50, verbose_name='Название услуги')
     price = models.IntegerField(verbose_name='Стоимость')
@@ -110,6 +113,30 @@ class Works(models.Model):
 
 class OrderHistory(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    repairer = models.CharField(max_length=50, verbose_name='Исполнитель')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
     date = models.DateTimeField(default=datetime.now())
     message = models.CharField(max_length=200, verbose_name='Сообщение')
+
+
+class Payments(models.Model):
+    PAYMENT_REASONS = (
+        ('PREPAYMENT', 'Предоплата'),
+        ('ORDER_PAYMENT', 'Оплата заказа'),
+        ('REFUND', 'Возврат предоплаты'),
+        ('SALARY_PAYOUT', 'Выплата заработной платы'),
+    )
+
+    # def get_absolute_url(self):
+    #     return reverse('payments/', kwargs={'pk': self.pk})
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True, 
+                                verbose_name='Заказ')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
+    payment_reason = models.CharField(max_length=30, verbose_name='Тип платежа',
+                                    choices=PAYMENT_REASONS)
+    date = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')
+    income = models.IntegerField(null=True, default=0, verbose_name='Приход')
+    expense = models.IntegerField(null=True, default=0, verbose_name='Расход')
+    comment = models.CharField(max_length=30, verbose_name='Комментарий', blank=True, default='')

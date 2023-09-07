@@ -4,19 +4,21 @@ from orders.models import *
 from .forms import *
 from django.views.generic import UpdateView, ListView
 from django.urls import reverse, reverse_lazy
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
-# class ClientsView(PermissionRequiredMixin, ListView):
-class ClientsView(ListView):
-    # permission_required = 'clients.view_client'
-    # login_url = reverse_lazy('login')
+class ClientsView(PermissionRequiredMixin, ListView):
+    permission_required = 'clients.view_client'
+    login_url = reverse_lazy('login')
     model = Client
     template_name = 'clients.html'
     context_object_name = 'clients'
     paginate_by = 15
 
 
-class EditClient(UpdateView):
+class EditClient(PermissionRequiredMixin, UpdateView):
+    permission_required = 'clients.change_client'
+    login_url = reverse_lazy('login')
     model = Client
     form_class = ClientForm
     template_name = 'edit_client.html'
