@@ -17,22 +17,22 @@ class Order(models.Model):
     def get_absolute_url(self):
         return reverse('order', kwargs={'order_id': self.pk})
     
-    # def get_finance_data(self):
-    #     works = Works.objects.filter(order_id=self.pk)
-    #     payments = Finance.objects.filter(order_id=self.pk)
-    #     prepayments_sum, profit, price = 0, 0, 0
-    #     # Расчёт суммы предоплаты в заказе (предоплаты - возврат предоплат)
-    #     for payment in payments:
-    #         prepayments_sum += payment.income + payment.expense
-    #     # Расчёт общей стоимости чистой прибыли заказа
-    #     for work in works:
-    #         work_price = (work.price - work.discount) * work.quantity
-    #         price += work_price
-    #         profit += work_price - (work.cost * work.quantity)
-    #     # Расчёт оставшейся суммы оплаты для клиента
-    #     client_debt = price - prepayments_sum
-    #     finance_data = {'profit': profit, 'client_debt': client_debt}
-    #     return finance_data
+    def get_finance_data(self):
+        works = Works.objects.filter(order_id=self.pk)
+        payments = Payments.objects.filter(order_id=self.pk)
+        prepayments_sum, profit, price = 0, 0, 0
+        # Расчёт суммы предоплаты в заказе (предоплаты - возврат предоплат)
+        for payment in payments:
+            prepayments_sum += payment.income + payment.expense
+        # Расчёт общей стоимости чистой прибыли заказа
+        for work in works:
+            work_price = (work.price - work.discount) * work.quantity
+            price += work_price
+            profit += work_price - (work.cost * work.quantity)
+        # Расчёт оставшейся суммы оплаты для клиента
+        client_debt = price - prepayments_sum
+        finance_data = {'profit': profit, 'client_debt': client_debt}
+        return finance_data
     
 
     def get_order_data(self):
