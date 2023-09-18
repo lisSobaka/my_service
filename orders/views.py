@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Type
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, DeleteView, UpdateView, TemplateView, CreateView
+from django.views.generic import ListView, DetailView, DeleteView, UpdateView, TemplateView, CreateView, FormView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpRequest, HttpResponseRedirect, Http404
@@ -9,8 +9,6 @@ from django.forms import Form
 from clients.forms import *
 from .models import *
 from .forms import *
-
-
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -236,7 +234,6 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
         return super().form_valid(form)
 
 
-
 def add_history_message(request, order_id):
     if request.method == 'POST':
         message_form = OrderHistoryForm(request.POST)
@@ -247,3 +244,123 @@ def add_history_message(request, order_id):
             message.save()
     return redirect('order', order_id)
 
+
+class EditWork(UpdateView):
+    model = Works
+    form_class = WorkForm
+    pk_url_kwarg = 'work_id'
+    template_name = 'edit_work.html'
+
+    def get_success_url(self) -> str:
+        success_url = reverse_lazy('order', kwargs={'order_id': self.kwargs['order_id']})
+        return success_url
+
+    def get_context_data(self, **kwargs):
+        order = Order.objects.get(pk=self.kwargs['order_id'])
+        context = order.get_order_data_cached()
+        if 'form' not in kwargs:
+            context['form'] = WorkForm(instance=Works.objects.get(pk=self.kwargs['work_id']))
+        else:
+            context['form'] = kwargs['form']
+        return context
+    
+    
+class AddWork(CreateView):
+    model = Works
+    form_class = WorkForm
+    template_name = 'add_work.html'
+
+    def get_context_data(self, **kwargs):
+        order = Order.objects.get(pk=self.kwargs['order_id'])
+        context = order.get_order_data_cached()
+        if 'form' not in kwargs:
+            context['form'] = WorkForm(initial={'employee': self.request.user.pk})
+        else:
+            context['form'] = kwargs['form']
+        return context
+    
+    def form_valid(self, form):
+        work = form.save(commit=False)
+        work.order_id = self.kwargs['order_id']
+        work.save()
+        OrderHistory.objects.create(
+            message = 'Добавлена услуга: ' + work.work,
+            order_id = work.order_id,
+            employee_id = self.request.user.pk
+        )
+
+        return redirect('order', self.kwargs['order_id'])
+    
+
+class DeleteWork(DeleteView):
+    model = Works
+    template_name = 'delete_confirmation.html'
+    pk_url_kwarg = 'work_id'
+    success_url = reverse_lazy('orders')
+
+    def get_context_data(self, **kwargs):
+        order = Order.objects.get(pk=self.kwargs['order_id'])
+        context = order.get_order_data_cached()
+        context['cancel_button'] = order.get_absolute_url()
+        context['main_page'] = 'order.html'
+        context['form'] = Form()
+        return context
+    
+    def form_valid(self, form):
+        OrderHistory.objects.create(
+            message = 'Удалена услуга: ' + self.object.work,
+            order_id = self.object.order_id,
+            employee_id = self.request.user.pk
+        )
+        return super().form_valid(form)
+    
+    def get_success_url(self) -> str:
+        return reverse_lazy('order', kwargs={'order_id': self.kwargs['order_id']})
+
+
+class CloseOrder(FormView):
+    model = Payments
+    template_name = 'add_payment.html'
+    form_class = PaymentsIncomeForm
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        order = Order.objects.get(pk=self.kwargs['order_id'])
+        context = order.get_order_data_cached()
+        context['form'] = super().get_form()
+        context['form'].fields['income'].widget.attrs['readonly'] = True
+        context['form'].initial={'income': order.get_finance_data()['client_debt']}
+        return context
+    
+    def form_valid(self, form: Any) -> HttpResponse:
+        order = Order.objects.get(pk=self.kwargs['order_id'])
+        works = Works.objects.filter(order_id = order.pk)
+        order.in_work = False
+        order.save()
+
+        payment = form.save(commit=False)
+        payment.income = order.get_finance_data()['client_debt']
+        payment.order_id = order.pk
+        payment.employee_id = self.request.user.pk
+        payment.payment_reason = 'ORDER_PAYMENT'
+        payment.save()
+
+        OrderHistory.objects.create(
+            message = 'Заказ закрыт! Добавлен платёж: ' + str(payment.income) + ' руб.',
+            order_id = payment.order_id,
+            employee_id = self.request.user.pk
+        )
+
+        # Проверяем все работы в заказе, если есть не оплаченные клиентом, добавляем их в ЗП мастеру,
+        # меняем статус на 'оплачен клиентом', присваиваем работе номер платежа
+        for work in works:
+            if not work.paid_by_client:
+                # salary = Salary.objects.get_or_create(
+                #     amount = (work.price - work.cost - work.discount) * work.quantity * (work.employee.percent/100),
+                #     order_id = order.pk,
+                #     employee_id = work.employee.pk,
+                #     work_id = work.pk
+                # )
+                work.paid_by_client = True
+                work.payment_id = payment.pk
+                work.save()
+        return redirect('order', order.pk)

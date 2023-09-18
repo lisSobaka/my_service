@@ -43,17 +43,28 @@
         {% block popup %} {% endblock popup %}
 
         <h1> Заказ №{{order.id}}  </h1>
-        <h2> Прибыль с заказа:  X3 &#8381; | 
+        <h2> Прибыль с заказа:  {{order.get_finance_data.profit}} &#8381; | 
             
+        {% with client_debt=order.get_finance_data.client_debt %}
+            {% if client_debt < 0 %}
+                Клиент оплатил: {{client_debt|cut:"-"}} &#8381;  </h2>
+            {% elif client_debt == 0 %} 
+                Заказ оплачен!  </h2>
+            {% else %}
+                Клиент должен: {{client_debt}} &#8381;  </h2>
+            {% endif %}
+        {% endwith %}
 
         {% if works %}
             <button>
                 <a href="{% url 'close_order' order.id %}">Закрыть заказ</a>
             </button>
         {% endif %}
-
+        
 
         <hr>
+
+
         <h2>Услуги</h2>
         <table class="full_width">
             <thead>
@@ -90,7 +101,9 @@
             {% endfor %}
         </table>
 
-        
+        <p><button><a href="{% url 'add_work' order.pk %}">Добавить услугу</a></button></p>
+
+
         <hr>
 
 
