@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Заработная плата{% endblock title %}
+{% block header %}Заработная плата{% endblock header %}
+
+{% block content%}
+<table>
+    <thead>
+        <th>№</th>
+        <th>Мастер</th>
+        <th>Процент</th>
+        <th>Сумма</th>
+    </thead>
+
+    {% for employee in employees %}
+        <tbody>
+            <tr>
+                <td>{{ employee.pk }}</td>
+                <td><a href="{% url 'employee_salary' employee.pk %}">
+                    {% if employee.get_full_name %}
+                            {{ employee.get_full_name }}
+                        {% else %}
+                            {{ employee.username }}
+                    {% endif %}</a></td>
+                <td>{{ employee.percent }}</td>
+                <td>{{ salary_data.salary }} руб.</td>
+            </tr>
+        </tbody>
+    {% endfor %}
+</table>
+{% endblock content %}
