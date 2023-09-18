@@ -21,12 +21,14 @@
             <hr>
         {% endfor %}
         </div>
+            {% if perms.orders.add_order %}
 
         <form method="POST" action="{% url 'add_history_message' order.pk %}">
             {% csrf_token %}
             {{ order_history_form.message }}
             <br>
-            <input type="submit" value="Сохранить">
+                <input type="submit" value="Сохранить">
+            {% endif %}
         </form>
         <hr>
     </div>
@@ -34,7 +36,7 @@
 
 
     <div class="order_containers-content">
-        {% if perms.clients.delete_order %}
+        {% if perms.orders.delete_order %}
             <button><a href="{% url 'delete_order' order.pk %}">&#10060;</a></button>
         {% endif %}
 
@@ -89,11 +91,11 @@
                     <td>{{ work.discount }}</td>
                     <td>{{ work.quantity }}</td>
                     <td>{{ work.employee.get_full_name }}</td>
-                    <td>{% if perms.clients.change_works %}
+                    <td>{% if perms.orders.change_works %}
                         <a href="{% url 'edit_work' work.order_id work.id %}">&#9997;</a>
                     {% endif %} 
                         
-                    {% if perms.clients.delete_works %}
+                    {% if perms.orders.delete_works %}
                         <a href="{% url 'delete_work' work.order_id work.id %}">&#10060;</a></td>
                     {% endif %} 
                         
@@ -197,7 +199,7 @@
                 <table>
                     <thead>
                         <th colspan="2"> <h3>Дополнительная информация
-                        {% if perms.clients.change_order %}
+                        {% if perms.orders.change_order %}
                             <button><a href="{% url 'edit_order' order.pk %}">&#9997;</a></button>
                         {% endif %}</th>
                     </thead>

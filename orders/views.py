@@ -245,7 +245,9 @@ def add_history_message(request, order_id):
     return redirect('order', order_id)
 
 
-class EditWork(UpdateView):
+class EditWork(PermissionRequiredMixin, UpdateView):
+    permission_required = 'orders.change_works'
+    login_url = reverse_lazy('login')
     model = Works
     form_class = WorkForm
     pk_url_kwarg = 'work_id'
@@ -265,7 +267,9 @@ class EditWork(UpdateView):
         return context
     
     
-class AddWork(CreateView):
+class AddWork(PermissionRequiredMixin, CreateView):
+    permission_required = 'orders.add_works'
+    login_url = reverse_lazy('login')
     model = Works
     form_class = WorkForm
     template_name = 'add_work.html'
@@ -292,7 +296,9 @@ class AddWork(CreateView):
         return redirect('order', self.kwargs['order_id'])
     
 
-class DeleteWork(DeleteView):
+class DeleteWork(PermissionRequiredMixin, DeleteView):
+    permission_required = 'orders.delete_works'
+    login_url = reverse_lazy('login')
     model = Works
     template_name = 'delete_confirmation.html'
     pk_url_kwarg = 'work_id'
@@ -318,7 +324,9 @@ class DeleteWork(DeleteView):
         return reverse_lazy('order', kwargs={'order_id': self.kwargs['order_id']})
 
 
-class CloseOrder(FormView):
+class CloseOrder(PermissionRequiredMixin, FormView):
+    permission_required = 'orders.change_order'
+    login_url = reverse_lazy('login')
     model = Payments
     template_name = 'add_payment.html'
     form_class = PaymentsIncomeForm
