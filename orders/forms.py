@@ -59,7 +59,7 @@ class WorkForm(forms.ModelForm):
                                                     'placeholder': 'discount'}),
             'quantity': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'quantity'}),
-            'employee': forms.TextInput(attrs={'class': 'text-field__input', 
+            'employee': forms.Select(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'employee'}),
         }
 

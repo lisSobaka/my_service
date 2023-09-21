@@ -133,9 +133,17 @@ class DeleteOperationsSalary(DeleteView):
         return context
     
     def form_valid(self, form):
+        print('!!!!!!!!!!!!!!!!!!!!!!', self)
+        print(form)
         if self.object.reason == 'PAYOUT':
-            paid_sevices = Salary.objects.filter(paid_for_employee=True) & Salary.objects.filter(paid_by_operation=self.object.pk)
-            for service in paid_sevices:
-                service.paid_for_employee = False
-                service.save()
+            salary_operaiton = self.object
+            make_works_unpaid(salary_operaiton)
         return super().form_valid(form)
+    
+
+# Находим услуги, выплаченные мастеру переданной операцией, делаем их невыплаченными
+def make_works_unpaid(salary_operation):
+    paid_works = Salary.objects.filter(paid_for_employee=True) & Salary.objects.filter(paid_by_operation=salary_operation.pk)
+    for work in paid_works:
+        work.paid_for_employee = False
+        work.save()

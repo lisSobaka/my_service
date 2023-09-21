@@ -6,8 +6,6 @@ from clients.models import Client
 from users.models import Employees
 
 
-    
-
 class Order(models.Model):    
     class Meta:
         verbose_name = 'Заказ'
@@ -93,32 +91,6 @@ class Order(models.Model):
     in_work = models.BooleanField(default=True)
 
 
-class Works(models.Model):
-
-    def get_absolute_url(self):
-        return reverse('edit_work', kwargs={'order_id': self.order_id, 'work_id': self.pk})
-
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
-                                verbose_name='Исполнитель')
-    payment = models.IntegerField(default=0, blank=True, verbose_name='Платёж')
-    work = models.CharField(max_length=50, verbose_name='Название услуги')
-    price = models.IntegerField(verbose_name='Стоимость')
-    cost = models.IntegerField(default=0, blank=True, verbose_name='Себестоимость')
-    guarantee = models.IntegerField(default=60, verbose_name='Гарантия')
-    discount = models.IntegerField(default=0, blank=True, verbose_name='Скидка')
-    quantity = models.IntegerField(default=1, verbose_name='Количество')
-    paid_by_client = models.BooleanField(default=False, verbose_name='Оплачено клиентом')
-
-
-class OrderHistory(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
-    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
-                                verbose_name='Исполнитель')
-    date = models.DateTimeField(default=datetime.now())
-    message = models.CharField(max_length=200, verbose_name='Сообщение')
-
-
 class Payments(models.Model):
     PAYMENT_REASONS = (
         ('PREPAYMENT', 'Предоплата'),
@@ -140,3 +112,30 @@ class Payments(models.Model):
     income = models.IntegerField(null=True, default=0, verbose_name='Приход')
     expense = models.IntegerField(null=True, default=0, verbose_name='Расход')
     comment = models.CharField(max_length=30, verbose_name='Комментарий', blank=True, default='')
+
+
+class Works(models.Model):
+
+    def get_absolute_url(self):
+        return reverse('edit_work', kwargs={'order_id': self.order_id, 'work_id': self.pk})
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
+    payment = models.ForeignKey(Payments, on_delete=models.SET_NULL, null=True, blank=True,
+                                verbose_name='Платёж №')
+    work = models.CharField(max_length=50, verbose_name='Название услуги')
+    price = models.IntegerField(verbose_name='Стоимость')
+    cost = models.IntegerField(default=0, blank=True, verbose_name='Себестоимость')
+    guarantee = models.IntegerField(default=60, verbose_name='Гарантия')
+    discount = models.IntegerField(default=0, blank=True, verbose_name='Скидка')
+    quantity = models.IntegerField(default=1, verbose_name='Количество')
+    paid_by_client = models.BooleanField(default=False, verbose_name='Оплачено клиентом')
+
+
+class OrderHistory(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
+    employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
+                                verbose_name='Исполнитель')
+    date = models.DateTimeField(default=datetime.now())
+    message = models.CharField(max_length=200, verbose_name='Сообщение')

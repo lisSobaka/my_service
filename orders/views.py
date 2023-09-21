@@ -10,6 +10,7 @@ from clients.forms import *
 from .models import *
 from .forms import *
 from salary.models import Salary
+from salary.views import make_works_unpaid
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -214,6 +215,7 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
     
     def form_valid(self, form):
         payment = self.object
+        print(payment.payment_reason)
         if payment.order_id:
             if payment.payment_reason == 'PREPAYMENT':
                 history_message = 'Удалена предоплата: ' + str(payment.income) + ' руб.'
@@ -226,12 +228,17 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
                 for work in paid_works:
                     work.paid_by_client = False
                     work.save()
+            OrderHistory.objects.create(
+                message = history_message,
+                order_id = payment.order_id,
+                employee_id = self.request.user.pk
+            )
 
-        OrderHistory.objects.create(
-            message = history_message,
-            order_id = payment.order_id,
-            employee_id = self.request.user.pk
-        )
+        # Если платёж выдавал ЗП - находим соответствующую выплату, делаем выплаченные ей услуги неоплаченными мастеру и удаляем её
+        if payment.payment_reason == 'SALARY_PAYOUT':
+            salary_operation = Salary.objects.get(payment_id=payment.pk)
+            make_works_unpaid(salary_operation)
+            salary_operation.delete()
         return super().form_valid(form)
 
 
@@ -371,5 +378,6 @@ class CloseOrder(PermissionRequiredMixin, FormView):
                 )
                 work.paid_by_client = True
                 work.payment_id = payment.pk
+                print('!!!!!!!!!!!!!!!!!!', work.payment)
                 work.save()
         return redirect('order', order.pk)
