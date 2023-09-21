@@ -21,6 +21,7 @@
         <a href="{% url 'orders' %}">Главная</a> |
         <a href="{% url 'clients' %}">Клиенты</a> |
         <a href="{% url 'payments' %}">Платежи</a> |
+        <a href="{% url 'main_salary' %}">ЗП</a> |
         <a href="{% url 'create_order' %}"><b>Новый заказ</b></a> |
 
         {% if request.user.is_authenticated %}

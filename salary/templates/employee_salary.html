@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Заработная плата{% endblock title %}
+{% block header %}Заработная плата {{ employee.get_full_name }} {% endblock header %}
+{% block content%}
+
+{% block popup %}{% endblock popup %}
+
+<h2>Заработная плата: {{ salary_amount }} рублей </h2>
+<button>
+    <a href="{% url 'operations_salary' employee.pk %}?type=payout">Выплатить ЗП</a>
+</button>
+<br>
+
+<button>
+    <a href="{% url 'operations_salary' employee.pk %}?type=bonus">Премия</a>
+</button>
+
+<button>
+    <a href="{% url 'operations_salary' employee.pk %}?type=penalty">Штраф</a>
+</button>
+
+<button>
+    <a href="{% url 'operations_salary' employee.pk %}?type=interim_payment">Промежуточная выплата</a>
+</button>
+
+<br><br>
+<table class="full_width">
+    <thead>
+        <th>№</th>
+        <th>Дата</th>
+        <th>Сумма</th>
+        <th>Номер заказа</th>
+        <th>Основание</th>
+        <th>Услуга в заказе</th>
+        <th>Комментарий</th>
+        <th>Выплчено?</th>
+        <th>Удалить</th>
+    </thead>
+
+    {% for object in salary %}
+        <tbody>
+            <tr>
+                <td>{{ object.pk }}</td>
+                <td>{{ object.date }}</td>
+                <td>{{ object.amount }}</td>
+                <td>{% if object.order_id %}
+                    <a href="{% url 'order' object.order_id %}">{{ object.order_id }}</a>
+                    {% else %} ---
+                {% endif %}</td>
+                <td>{{ object.get_reason_display }}</td>
+                <td>{% if object.work.work %}
+                    {{ object.work.work }}
+                    {% else %} ---
+                {% endif %}</td>
+                <td>{{ object.comment }}</td>
+                <td>{{ object.paid_for_employee }}</td>
+                <td>
+                {% if perms.clients.delete_client %}
+                    <a href="{% url 'delete_operation_salary' object.employee_id object.pk %}"> Удалить </a>
+                {% endif %}
+                 </td>
+            </tr>
+        </tbody>
+    {% endfor %}
+</table>
+{% endblock content %}

@@ -9,6 +9,7 @@ from django.forms import Form
 from clients.forms import *
 from .models import *
 from .forms import *
+from salary.models import Salary
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -362,12 +363,12 @@ class CloseOrder(PermissionRequiredMixin, FormView):
         # меняем статус на 'оплачен клиентом', присваиваем работе номер платежа
         for work in works:
             if not work.paid_by_client:
-                # salary = Salary.objects.get_or_create(
-                #     amount = (work.price - work.cost - work.discount) * work.quantity * (work.employee.percent/100),
-                #     order_id = order.pk,
-                #     employee_id = work.employee.pk,
-                #     work_id = work.pk
-                # )
+                salary = Salary.objects.get_or_create(
+                    amount = (work.price - work.cost - work.discount) * work.quantity * (work.employee.percent/100),
+                    order_id = order.pk,
+                    employee_id = work.employee.pk,
+                    work_id = work.pk
+                )
                 work.paid_by_client = True
                 work.payment_id = payment.pk
                 work.save()
