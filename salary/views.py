@@ -24,12 +24,14 @@ def get_salary_data(employee_id):
 class MainSalary(ListView):
     model = Employees
     template_name = 'main_salary.html'
-    context_object_name = 'employees'
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context['salary_data'] = get_salary_data(context['object_list'][0].pk)
-        print('!!!!!!!!!!!!', context['salary_data'])
+        context = {}
+        context['employees'] = {}
+        employees = Employees.objects.all()
+        if employees:
+            for employee in employees:
+                context['employees'][employee] = get_salary_data(employee)['salary']
         return context
 
 
@@ -46,6 +48,7 @@ class EmployeeSalary(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['employee'] = Employees.objects.get(pk=self.kwargs['employee_id'])
+        context['salary_amount'] = get_salary_data(context['employee'].pk)['salary']
         return context
     
 
@@ -61,8 +64,6 @@ class OperationsSalary(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['salary'] = Salary.objects.select_related('employee').filter(employee_id=self.kwargs['employee_id']).order_by('-pk')
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        print(context['salary'])
         if context['salary']:
             context['employee'] = context['salary'][0].employee
         else:
@@ -71,11 +72,12 @@ class OperationsSalary(CreateView):
             employee = Employees.objects.get(pk=self.kwargs['employee_id'])
             context['form'].initial={'amount': get_salary_data(employee.pk)['salary']}
             context['form'].fields['amount'].widget.attrs['readonly'] = True
+        context['salary_amount'] = get_salary_data(context['employee'].pk)['salary']
         return context
 
     def form_valid(self, form):
         if self.request.GET.get('type') == 'payout':
-            employee = employee.objects.get(pk=self.kwargs['employee_id'])
+            employee = Employees.objects.get(pk=self.kwargs['employee_id'])
             salary_data = get_salary_data(employee.pk)
             if salary_data['salary'] != 0:
                 unpaid_services = salary_data['unpaid_services']
@@ -127,6 +129,7 @@ class DeleteOperationsSalary(DeleteView):
         context['employee'] = Employees.objects.get(pk=self.kwargs['employee_id'])
         context['main_page'] = 'employee_salary.html'
         context['cancel_button'] = reverse_lazy('employee_salary', kwargs={'employee_id': self.kwargs['employee_id']})
+        context['salary_amount'] = get_salary_data(self.kwargs['employee_id'])['salary']
         return context
     
     def form_valid(self, form):

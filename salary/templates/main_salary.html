@@ -12,7 +12,7 @@
         <th>Сумма</th>
     </thead>
 
-    {% for employee in employees %}
+    {% for employee, salary in employees.items %}
         <tbody>
             <tr>
                 <td>{{ employee.pk }}</td>
@@ -23,7 +23,7 @@
                             {{ employee.username }}
                     {% endif %}</a></td>
                 <td>{{ employee.percent }}</td>
-                <td>{{ salary_data.salary }} руб.</td>
+                <td>{{ salary }} руб.</td>
             </tr>
         </tbody>
     {% endfor %}

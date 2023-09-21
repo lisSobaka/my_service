@@ -4,7 +4,6 @@ from orders.models import Order, Works, Payments
 from datetime import datetime
 
 
-
 class Salary(models.Model):
 
     SALARY_REASONS = (
@@ -14,6 +13,7 @@ class Salary(models.Model):
         ('PAYOUT', 'Выплата ЗП'),
         ('INTERIM_PAYMENT', 'Промежуточная выплата')
     )
+    
     employee = models.ForeignKey(Employees, on_delete=models.DO_NOTHING, verbose_name='Исполнитель')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True,
                               verbose_name='Номер заказа')

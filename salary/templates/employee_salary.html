@@ -6,7 +6,7 @@
 
 {% block popup %}{% endblock popup %}
 
-<h2>Заработная плата: {{ employee.get_salary_data.salary }} рублей </h2>
+<h2>Заработная плата: {{ salary_amount }} рублей </h2>
 <button>
     <a href="{% url 'operations_salary' employee.pk %}?type=payout">Выплатить ЗП</a>
 </button>
