@@ -11,6 +11,25 @@
     <h2>Общий доход: {{ all_income }} ₽ | 
         Общий расход: {{ all_expense }} ₽| 
         Профит: {{ all_profit }} ₽</h2>
+
+
+    Фильтр:
+    <form action="" method="get">
+        <select name='filter'>
+            <option disabled selected>Выбрать дату</option>
+            <option value="1">Сегодня</option>
+            <option value="7">Неделя</option>
+            <option value="30">Месяц</option>
+            <option value="90">Квартал</option>
+            <option value="365">Год</option>
+        </select>
+        <br>
+        Начало интервала: <input type="date" name="start">
+        <br>
+        Конец интервала:  <input type="date" name="end">
+        <br><br>
+        <input type="submit" value="Фильтр">
+    </form>
     
     <table class="payments full_width">
         <thead class="payments">

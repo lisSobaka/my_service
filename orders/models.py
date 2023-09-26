@@ -6,7 +6,7 @@ from clients.models import Client
 from users.models import Employees
 
 
-class Order(models.Model):    
+class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
@@ -92,6 +92,12 @@ class Order(models.Model):
 
 
 class Payments(models.Model):
+    class Meta:
+        verbose_name = 'Платеж'
+        verbose_name_plural = 'Платежи'
+        ordering = ['-pk']
+
+
     PAYMENT_REASONS = (
         ('PREPAYMENT', 'Предоплата'),
         ('ORDER_PAYMENT', 'Оплата заказа'),

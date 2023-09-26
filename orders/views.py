@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Type
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, TemplateView, CreateView, FormView
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -12,6 +13,7 @@ from .forms import *
 from salary.models import Salary
 from salary.views import make_works_unpaid
 from django.db.models import Sum
+from datetime import date, datetime, timedelta
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -184,23 +186,42 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     model = Payments
     template_name = 'payments.html'
     context_object_name = 'payments'
+    ordering = '-pk'
     paginate_by = 15
+
+    def get_queryset(self) -> QuerySet[Any]:
+        if self.request.GET.get('filter'):
+            period = int(self.request.GET.get('filter'))
+            current_date = date.today() - timedelta(days=period)
+            queryset = Payments.objects.filter(date__gte = current_date)
+
+        elif self.request.GET.get('start'):
+            start = self.request.GET.get('start')
+            # По какой-то причине в конце не добирает один день, тут я привожу к формату даты и добавляю этот день
+            end = datetime.strptime(self.request.GET.get('end'), "%Y-%m-%d") + timedelta(days=1)
+            queryset = Payments.objects.filter(date__range=(start, end))
+        else:
+            queryset = Payments.objects.all()
+
+        return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
+        if not context['all_income']:
+            context['all_income'] = 0
         context['all_expense'] = context['payments'].aggregate(Sum('expense'))['expense__sum']
+        if not context['all_expense']:
+            context['all_expense'] = 0
+
         context['all_profit'] = context['all_income'] - context['all_expense']
 
-        # Кэшируем контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
+        # Кэширую контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
         cached_context = context
         del(cached_context['view'])
         cache.set_many({'cached_context': cached_context})
 
         return context
-    
-    # def get_context_data_cached():
-    #     if not 
 
     
 class DeletePayment(PermissionRequiredMixin, DeleteView):
