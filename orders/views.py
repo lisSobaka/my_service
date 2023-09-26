@@ -11,6 +11,7 @@ from .models import *
 from .forms import *
 from salary.models import Salary
 from salary.views import make_works_unpaid
+from django.db.models import Sum
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -183,6 +184,23 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     model = Payments
     template_name = 'payments.html'
     context_object_name = 'payments'
+    paginate_by = 15
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
+        context['all_expense'] = context['payments'].aggregate(Sum('expense'))['expense__sum']
+        context['all_profit'] = context['all_income'] - context['all_expense']
+
+        # Кэшируем контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
+        cached_context = context
+        del(cached_context['view'])
+        cache.set_many({'cached_context': cached_context})
+
+        return context
+    
+    # def get_context_data_cached():
+    #     if not 
 
     
 class DeletePayment(PermissionRequiredMixin, DeleteView):
@@ -206,8 +224,8 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
             context['cancel_button'] = order.get_absolute_url()
             context['main_page'] = 'order.html'
         else:
-            context = {}
-            context['finance'] = Payments.objects.all().order_by('-pk')
+            # Забираем контекст из кэша (он формируется в классе PaymentsView)
+            context = cache.get('cached_context')
             context['form'] = Form()
             context['cancel_button'] = reverse_lazy('payments')
             context['main_page'] = 'payments.html'
@@ -215,7 +233,6 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
     
     def form_valid(self, form):
         payment = self.object
-        print(payment.payment_reason)
         if payment.order_id:
             if payment.payment_reason == 'PREPAYMENT':
                 history_message = 'Удалена предоплата: ' + str(payment.income) + ' руб.'
