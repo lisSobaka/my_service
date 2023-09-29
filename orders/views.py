@@ -13,7 +13,7 @@ from .forms import *
 from salary.models import Salary
 from salary.views import make_works_unpaid
 from django.db.models import Sum
-from datetime import date, datetime, timedelta
+from datetime import date, time, datetime, timedelta
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -90,9 +90,15 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
     template_name = 'order_new.html'
 
     def get_context_data(self, **kwargs):
+        date_completion = datetime(date.today().year, date.today().month, \
+                                   date.today().day, datetime.now().hour) \
+                                   + timedelta(days=3, hours=1)
+        
         context = super().get_context_data(**kwargs)
         context['client_form'] = ClientForm()
-        context['order_form'] = OrderForm(initial={'employee': self.request.user.id, 'date_completion': datetime.now})
+        context['order_form'] = OrderForm(initial={
+                                    'employee': self.request.user.id,
+                                    'date_completion': date_completion})
         print(self.request.user.id)
         return context
     

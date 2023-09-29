@@ -81,8 +81,7 @@ class Order(models.Model):
                                    verbose_name='Заметки клиент НЕ видит')
     note_client = models.CharField(max_length=150, blank=True, default='', 
                                    verbose_name='Заметки клиент видит')
-    prepayment = models.IntegerField(null=True, blank=True, default=0, 
-                                     verbose_name='Предоплата')
+    prepayment = models.IntegerField(null=True, blank=True, verbose_name='Предоплата')
     profit = models.IntegerField(null=True, default=0, verbose_name='Профит')
     debt = models.IntegerField(null=True, default=0, verbose_name='Клиент должен')
     date_creation = models.DateTimeField(default=datetime.now(), null=True, verbose_name='Дата создания')
