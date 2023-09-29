@@ -189,17 +189,56 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     ordering = '-pk'
     paginate_by = 15
 
-    def get_queryset(self) -> QuerySet[Any]:
-        if self.request.GET.get('filter'):
-            period = int(self.request.GET.get('filter'))
-            current_date = date.today() - timedelta(days=period)
-            queryset = Payments.objects.filter(date__gte = current_date)
+    def get_interval(self):
+        today = date.today()
+        end = today + timedelta(days=1)
+        if self.request.GET.get('date') == 'today':
+            start = today
 
-        elif self.request.GET.get('start'):
+        elif self.request.GET.get('date') == 'yesterday':
+            start = today - timedelta(days=1)
+            end = today
+
+        elif self.request.GET.get('date') == 'week':
+            start = today - timedelta(days=date.weekday(today))
+
+        elif self.request.GET.get('date') == 'month':
+            start = today - timedelta(days=date.today().day - 1)
+
+        elif self.request.GET.get('date') == 'last_month':
+            end = date(date.today().year, date.today().month, 1) - timedelta(days=1)
+            start = end - timedelta(days=end.day - 1)
+
+        elif self.request.GET.get('date') == 'year':
+            start = date(date.today().year, 1, 1)
+
+        elif self.request.GET.get('date') == 'period':
             start = self.request.GET.get('start')
-            # По какой-то причине в конце не добирает один день, тут я привожу к формату даты и добавляю этот день
+            # По какой-то причине в конце не добирает один день, тут я привожу к
+            # формату даты и добавляю этот день
             end = datetime.strptime(self.request.GET.get('end'), "%Y-%m-%d") + timedelta(days=1)
-            queryset = Payments.objects.filter(date__range=(start, end))
+        print(f'!!!!!!!!!!!!!!!!!!!!!! Начало интервала: {start}, конец интервала: {end}')
+
+        interval = {
+            'start': start,
+            'end': end,
+        }
+
+        return interval
+
+    def get_queryset(self) -> QuerySet[Any]:
+        if self.request.GET.get('date') and self.request.GET.get('employee'):
+            interval = self.get_interval()
+            queryset = Payments.objects.filter(date__range=(interval['start'], interval['end'])) & \
+                       Payments.objects.filter(employee_id=self.request.GET.get('employee'))
+            
+        elif self.request.GET.get('date'):
+            interval = self.get_interval()
+            queryset = Payments.objects.filter(date__range=(interval['start'], interval['end']))
+
+        elif self.request.GET.get('employee'):
+            queryset = Payments.objects.filter(employee_id=self.request.GET.get('employee'))
+
         else:
             queryset = Payments.objects.all()
 
@@ -207,10 +246,12 @@ class PaymentsView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        print(context)
         context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
         if not context['all_income']:
             context['all_income'] = 0
         context['all_expense'] = context['payments'].aggregate(Sum('expense'))['expense__sum']
+
         if not context['all_expense']:
             context['all_expense'] = 0
 
@@ -220,6 +261,8 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         cached_context = context
         del(cached_context['view'])
         cache.set_many({'cached_context': cached_context})
+
+        context['employees'] = Employees.objects.all()
 
         return context
 

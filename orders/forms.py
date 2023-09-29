@@ -2,6 +2,12 @@ from django import forms
 from .models import *
 
 
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
+    format = '%Y-%m-%d %H:%M'
+    
+
+
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
@@ -35,7 +41,7 @@ class OrderForm(forms.ModelForm):
                                                     'placeholder': 'note_hidden'}),
             'note_client': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'note_client'}),
-            'date_completion': forms.DateInput(attrs={'class': 'text-field__input', 
+            'date_completion': DateTimeInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'date_completion'}), 
         }
 

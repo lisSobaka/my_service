@@ -32,7 +32,6 @@ class Order(models.Model):
         finance_data = {'profit': profit, 'client_debt': client_debt}
         return finance_data
     
-
     def get_order_data(self):
         order_data = {}
         order_data['order'] = self
@@ -97,7 +96,6 @@ class Payments(models.Model):
         verbose_name_plural = 'Платежи'
         ordering = ['-pk']
 
-
     PAYMENT_REASONS = (
         ('PREPAYMENT', 'Предоплата'),
         ('ORDER_PAYMENT', 'Оплата заказа'),
@@ -121,7 +119,6 @@ class Payments(models.Model):
 
 
 class Works(models.Model):
-
     def get_absolute_url(self):
         return reverse('edit_work', kwargs={'order_id': self.order_id, 'work_id': self.pk})
 
