@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Type
+from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, DeleteView, UpdateView, TemplateView, CreateView, FormView
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -10,6 +11,9 @@ from clients.forms import *
 from .models import *
 from .forms import *
 from salary.models import Salary
+from salary.views import make_works_unpaid
+from django.db.models import Sum
+from datetime import date, time, datetime, timedelta
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -86,9 +90,15 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
     template_name = 'order_new.html'
 
     def get_context_data(self, **kwargs):
+        date_completion = datetime(date.today().year, date.today().month, \
+                                   date.today().day, datetime.now().hour) \
+                                   + timedelta(days=3, hours=1)
+        
         context = super().get_context_data(**kwargs)
         context['client_form'] = ClientForm()
-        context['order_form'] = OrderForm(initial={'employee': self.request.user.id, 'date_completion': datetime.now})
+        context['order_form'] = OrderForm(initial={
+                                    'employee': self.request.user.id,
+                                    'date_completion': date_completion})
         print(self.request.user.id)
         return context
     
@@ -182,6 +192,85 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     model = Payments
     template_name = 'payments.html'
     context_object_name = 'payments'
+    ordering = '-pk'
+    paginate_by = 15
+
+    def get_interval(self):
+        today = date.today()
+        end = today + timedelta(days=1)
+        if self.request.GET.get('date') == 'today':
+            start = today
+
+        elif self.request.GET.get('date') == 'yesterday':
+            start = today - timedelta(days=1)
+            end = today
+
+        elif self.request.GET.get('date') == 'week':
+            start = today - timedelta(days=date.weekday(today))
+
+        elif self.request.GET.get('date') == 'month':
+            start = today - timedelta(days=date.today().day - 1)
+
+        elif self.request.GET.get('date') == 'last_month':
+            end = date(date.today().year, date.today().month, 1) - timedelta(days=1)
+            start = end - timedelta(days=end.day - 1)
+
+        elif self.request.GET.get('date') == 'year':
+            start = date(date.today().year, 1, 1)
+
+        elif self.request.GET.get('date') == 'period':
+            start = self.request.GET.get('start')
+            # По какой-то причине в конце не добирает один день, тут я привожу к
+            # формату даты и добавляю этот день
+            end = datetime.strptime(self.request.GET.get('end'), "%Y-%m-%d") + timedelta(days=1)
+        print(f'!!!!!!!!!!!!!!!!!!!!!! Начало интервала: {start}, конец интервала: {end}')
+
+        interval = {
+            'start': start,
+            'end': end,
+        }
+
+        return interval
+
+    def get_queryset(self) -> QuerySet[Any]:
+        if self.request.GET.get('date') and self.request.GET.get('employee'):
+            interval = self.get_interval()
+            queryset = Payments.objects.filter(date__range=(interval['start'], interval['end'])) & \
+                       Payments.objects.filter(employee_id=self.request.GET.get('employee'))
+            
+        elif self.request.GET.get('date'):
+            interval = self.get_interval()
+            queryset = Payments.objects.filter(date__range=(interval['start'], interval['end']))
+
+        elif self.request.GET.get('employee'):
+            queryset = Payments.objects.filter(employee_id=self.request.GET.get('employee'))
+
+        else:
+            queryset = Payments.objects.all()
+
+        return queryset
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        print(context)
+        context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
+        if not context['all_income']:
+            context['all_income'] = 0
+        context['all_expense'] = context['payments'].aggregate(Sum('expense'))['expense__sum']
+
+        if not context['all_expense']:
+            context['all_expense'] = 0
+
+        context['all_profit'] = context['all_income'] - context['all_expense']
+
+        # Кэширую контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
+        cached_context = context
+        del(cached_context['view'])
+        cache.set_many({'cached_context': cached_context})
+
+        context['employees'] = Employees.objects.all()
+
+        return context
 
     
 class DeletePayment(PermissionRequiredMixin, DeleteView):
@@ -205,8 +294,8 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
             context['cancel_button'] = order.get_absolute_url()
             context['main_page'] = 'order.html'
         else:
-            context = {}
-            context['finance'] = Payments.objects.all().order_by('-pk')
+            # Забираем контекст из кэша (он формируется в классе PaymentsView)
+            context = cache.get('cached_context')
             context['form'] = Form()
             context['cancel_button'] = reverse_lazy('payments')
             context['main_page'] = 'payments.html'
@@ -226,12 +315,17 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
                 for work in paid_works:
                     work.paid_by_client = False
                     work.save()
+            OrderHistory.objects.create(
+                message = history_message,
+                order_id = payment.order_id,
+                employee_id = self.request.user.pk
+            )
 
-        OrderHistory.objects.create(
-            message = history_message,
-            order_id = payment.order_id,
-            employee_id = self.request.user.pk
-        )
+        # Если платёж выдавал ЗП - находим соответствующую выплату, делаем выплаченные ей услуги неоплаченными мастеру и удаляем её
+        if payment.payment_reason == 'SALARY_PAYOUT':
+            salary_operation = Salary.objects.get(payment_id=payment.pk)
+            make_works_unpaid(salary_operation)
+            salary_operation.delete()
         return super().form_valid(form)
 
 
@@ -371,5 +465,6 @@ class CloseOrder(PermissionRequiredMixin, FormView):
                 )
                 work.paid_by_client = True
                 work.payment_id = payment.pk
+                print('!!!!!!!!!!!!!!!!!!', work.payment)
                 work.save()
         return redirect('order', order.pk)

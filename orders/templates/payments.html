@@ -1,16 +1,65 @@
 {% extends "base.html" %}
 {% load static %}
+{% block head %}
+
+{% endblock head %}
 {% block title %}Платежи{% endblock title %}
 {% block header %}Платежи{% endblock header %}
 
 <div>
     {% block content%}
-
     {% block popup %}{% endblock popup %}
 
-    <h2>Общий доход: {{finance_sum.all_income}} | 
-        Общий расход: {{finance_sum.all_expense}} | 
-        Профит: {{finance_sum.all_profit}}</h2>
+    <h2>Общий доход: {{ all_income }} ₽ | 
+        Общий расход: {{ all_expense }} ₽| 
+        Профит: {{ all_profit }} ₽</h2>
+
+
+        <script>
+            function showCalendar(e) {
+                if (e === "period"){
+             document.getElementById("calendars").hidden = false;
+             document.getElementById("period_start").disabled = false;
+             document.getElementById("period_end").disabled = false;
+            }
+                if (e !== "period"){
+             document.getElementById("calendars").hidden = true;
+             document.getElementById("period_start").disabled = true;
+             document.getElementById("period_end").disabled = true;
+            }}
+        </script>
+
+    Фильтр:
+    <form action="" method="get" id="date">
+        <select name='date' onchange="showCalendar(this.value)">
+            <option disabled selected>Выбрать дату</option>
+            <option value="today">Сегодня</option>
+            <option value="yesterday">Вчера</option>
+            <option value="week">С начала недели</option>
+            <option value="month">С начала месяца</option>
+            <option value="last_month">Прошлый месяц</option>
+            <option value="year">С начала года</option>
+            <option value="period">Выбрать период</option>
+        </select>
+
+        <span id="calendars" hidden>
+            Начало: <input disabled type="date" name="start" id="period_start">
+            Конец:  <input disabled type="date" name="end" id="period_end">
+        </span>
+
+        <form action="" method="get">
+            <select name="employee">
+                <option value="" disabled selected>Выбрать сотрудника</option>
+                {% for employee in employees %}
+                    <option value={{ employee.pk }}>{{ employee.get_full_name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        
+        <input form="date" type="submit" value="Фильтр">
+    </form>
+
+    <hr>
     
     <table class="payments full_width">
         <thead class="payments">
