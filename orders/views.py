@@ -14,6 +14,7 @@ from salary.models import Salary
 from salary.views import make_works_unpaid
 from django.db.models import Sum
 from datetime import date, time, datetime, timedelta
+from my_service.filter_forms import FilterDateForm, FilterEmployeeForm
 
 
 class OrdersView(PermissionRequiredMixin, ListView):
@@ -218,7 +219,7 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         elif self.request.GET.get('date') == 'year':
             start = date(date.today().year, 1, 1)
 
-        elif self.request.GET.get('date') == 'period':
+        elif self.request.GET.get('date') == 'interval':
             start = self.request.GET.get('start')
             # По какой-то причине в конце не добирает один день, тут я привожу к
             # формату даты и добавляю этот день
@@ -252,7 +253,6 @@ class PaymentsView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        print(context)
         context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
         if not context['all_income']:
             context['all_income'] = 0
@@ -269,6 +269,14 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         cache.set_many({'cached_context': cached_context})
 
         context['employees'] = Employees.objects.all()
+
+        context['filter_date_form'] = FilterDateForm(initial={'date': self.request.GET.get('date'),
+                                                              'start': self.request.GET.get('start'),
+                                                              'end': self.request.GET.get('end')})
+        context['filter_employee_form'] = FilterEmployeeForm()
+        print('!!!!!!!!!!!', context['filter_date_form'])
+        # if self.request.GET.get('interval'):
+            # context['filter_date_form'].initial={}
 
         return context
 
