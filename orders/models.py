@@ -111,7 +111,7 @@ class Payments(models.Model):
                                 verbose_name='Исполнитель')
     payment_reason = models.CharField(max_length=30, verbose_name='Тип платежа',
                                     choices=PAYMENT_REASONS)
-    date = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')
+    date_creation = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')
     income = models.IntegerField(null=True, default=0, verbose_name='Приход')
     expense = models.IntegerField(null=True, default=0, verbose_name='Расход')
     comment = models.CharField(max_length=30, verbose_name='Комментарий', blank=True, default='')

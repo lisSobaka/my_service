@@ -14,7 +14,7 @@
         Общий расход: {{ all_expense }} ₽| 
         Профит: {{ all_profit }} ₽</h2>
 
-    Фильтр new:
+    Фильтр:
     <br>
 
     <form action="" method="get" name="date_form">
@@ -45,7 +45,7 @@
         <tbody>
             {% for payment in payments %}
             <tr>
-                <td>{{payment.date}}</td>
+                <td>{{payment.date_creation}}</td>
                 <td>{{payment.income}}</td>
                 <td>{{payment.expense}}</td>
                 <td>{% if payment.order.id %}
@@ -61,32 +61,7 @@
         </tbody>
     </table>
 
-    
-    <script>
-        function showCalendar() {
-            document.getElementById("interval_start").hidden = false;
-            document.getElementById("interval_end").hidden = false;
-            document.getElementById("interval_start").disabled = false;
-            document.getElementById("interval_end").disabled = false;
-        }
-
-        function hideCalendar() {
-            document.getElementById("interval_start").hidden = true;
-            document.getElementById("interval_end").hidden = true;
-            document.getElementById("interval_start").disabled = true;
-            document.getElementById("interval_end").disabled = true;
-        }
-        
-        if (document.getElementById("date_selector").value === "interval"){
-            showCalendar()
-        }
-
-        function showHideCalendar(choice){
-            if (choice === "interval"){showCalendar()}
-            if (choice !== "interval"){hideCalendar()}
-            }
-    </script>
-
+    <script src="{% static 'js/filter.js' %}"></script>
 
     {% endblock content %}
 </div>

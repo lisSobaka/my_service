@@ -5,6 +5,32 @@
 
 {% block content%}
 
+Поиск:
+<br>
+<form action="" method="GET">
+    <input type="text" name="search" 
+    {% if search_query %} value="{{ search_query }}">
+    {% else %} value="">
+    {% endif %}
+    <input type="submit">
+</form>
+
+
+Фильтр:
+<br>
+
+<form action="" method="get" name="date_form">
+    {% for field in filter_date_form %}
+        {{ field }}
+    {% endfor %}
+
+    {{ filter_employee_form }}
+    <br>
+    <input type="submit" value="Фильтр">
+</form>
+
+<hr>
+
 <div>
 <table class="orders full_width">
     <thead class="orders">
@@ -34,5 +60,7 @@
     </tbody>
 </table>
 </div>
+
+<script src="{% static 'js/filter.js' %}"></script>
 
 {% endblock content %}
