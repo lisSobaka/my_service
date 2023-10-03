@@ -197,6 +197,8 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     paginate_by = 15
 
     def get_interval(self):
+        # Проверяю, какой временной интервал передан в GET, высчитываю и отправляю 
+        # start и end для дальнейшего формирования queryset
         today = date.today()
         end = today + timedelta(days=1)
         if self.request.GET.get('date') == 'today':
@@ -224,7 +226,6 @@ class PaymentsView(PermissionRequiredMixin, ListView):
             # По какой-то причине в конце не добирает один день, тут я привожу к
             # формату даты и добавляю этот день
             end = datetime.strptime(self.request.GET.get('end'), "%Y-%m-%d") + timedelta(days=1)
-        print(f'!!!!!!!!!!!!!!!!!!!!!! Начало интервала: {start}, конец интервала: {end}')
 
         interval = {
             'start': start,
@@ -234,6 +235,7 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         return interval
 
     def get_queryset(self) -> QuerySet[Any]:
+        # Проверяю, что в GET, и формирую queryset с учётом параметров фильтра
         if self.request.GET.get('date') and self.request.GET.get('employee'):
             interval = self.get_interval()
             queryset = Payments.objects.filter(date__range=(interval['start'], interval['end'])) & \
@@ -253,6 +255,8 @@ class PaymentsView(PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+
+        #Считаю общие доход, расод и профит для отображения на главной странице платежей
         context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
         if not context['all_income']:
             context['all_income'] = 0
@@ -268,15 +272,12 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         del(cached_context['view'])
         cache.set_many({'cached_context': cached_context})
 
-        context['employees'] = Employees.objects.all()
-
+        # Инициализирую и добавляю в контекст Select'ы для фильтра
         context['filter_date_form'] = FilterDateForm(initial={'date': self.request.GET.get('date'),
                                                               'start': self.request.GET.get('start'),
                                                               'end': self.request.GET.get('end')})
-        context['filter_employee_form'] = FilterEmployeeForm()
-        print('!!!!!!!!!!!', context['filter_date_form'])
-        # if self.request.GET.get('interval'):
-            # context['filter_date_form'].initial={}
+        context['filter_employee_form'] = FilterEmployeeForm(initial={
+                                                             'employee': self.request.GET.get('employee')})
 
         return context
 
@@ -329,7 +330,8 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
                 employee_id = self.request.user.pk
             )
 
-        # Если платёж выдавал ЗП - находим соответствующую выплату, делаем выплаченные ей услуги неоплаченными мастеру и удаляем её
+        # Если платёж выдавал ЗП - находим соответствующую выплату, 
+        # делаем выплаченные ей услуги неоплаченными мастеру и удаляем её
         if payment.payment_reason == 'SALARY_PAYOUT':
             salary_operation = Salary.objects.get(payment_id=payment.pk)
             make_works_unpaid(salary_operation)
@@ -466,7 +468,8 @@ class CloseOrder(PermissionRequiredMixin, FormView):
         for work in works:
             if not work.paid_by_client:
                 salary = Salary.objects.get_or_create(
-                    amount = (work.price - work.cost - work.discount) * work.quantity * (work.employee.percent/100),
+                    amount = (work.price - work.cost - work.discount) * work.quantity \
+                           * (work.employee.percent/100),
                     order_id = order.pk,
                     employee_id = work.employee.pk,
                     work_id = work.pk

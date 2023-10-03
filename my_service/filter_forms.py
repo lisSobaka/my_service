@@ -8,6 +8,7 @@ class DateInput(forms.DateInput):
 
 class FilterDateForm(forms.Form):
     FILTER_SELECTIONS = (
+        ('', 'Выбрать дату'),
         ('today', 'Сегодня'),
         ('yesterday', 'Вчера'),
         ('week', 'С начала недели'),
@@ -18,6 +19,7 @@ class FilterDateForm(forms.Form):
     )
 
     date = forms.ChoiceField(label='Дата:', 
+                             required=False,
                              choices=FILTER_SELECTIONS,
                              widget=forms.Select(attrs={'id': 'date_selector',
                                                         'onchange': 'showHideCalendar(this.value)',}))
@@ -34,8 +36,10 @@ class FilterDateForm(forms.Form):
 class FilterEmployeeForm(forms.ModelForm):
     class Meta:
         model = Employees
-        fields = ['pk']
-        widgets = {
-            'pk': forms.Select()
-        }
-    
+        fields = ['id']
+
+    employee = forms.ModelChoiceField(label='Сотрудник', 
+                                      required=False,
+                                      empty_label='Выбрать сотрудника',
+                                      queryset=Employees.objects.all(),
+                                      widget=forms.Select())

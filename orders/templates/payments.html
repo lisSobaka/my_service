@@ -21,12 +21,10 @@
         {% for field in filter_date_form %}
             {{ field }}
         {% endfor %}
+
+        {{ filter_employee_form }}
         <br>
         <input type="submit" value="Фильтр">
-    </form>
-
-    <form action="" method="get" name="employee_form">
-        {{ employee_form }}
     </form>
 
     <hr>
