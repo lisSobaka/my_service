@@ -215,7 +215,6 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     model = Payments
     template_name = 'payments.html'
     context_object_name = 'payments'
-    ordering = '-pk'
     paginate_by = 15
 
     def get_queryset(self) -> QuerySet[Any]:
