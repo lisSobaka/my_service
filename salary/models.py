@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import Employees
 from orders.models import Order, Works, Payments
-from datetime import datetime
+from django.utils import timezone
 
 
 class Salary(models.Model):
@@ -23,7 +23,7 @@ class Salary(models.Model):
                                 verbose_name='Платёж №')
     reason = models.CharField(max_length=30, verbose_name='Основание', choices=SALARY_REASONS,
                               default='ACCRUAL')
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(default=timezone.now)
     amount = models.IntegerField(verbose_name='Сумма')
     comment = models.CharField(max_length=100, blank=True, default='', verbose_name='Комментарий')
     paid_for_employee = models.BooleanField(default=False, verbose_name='Оплачено мастеру')

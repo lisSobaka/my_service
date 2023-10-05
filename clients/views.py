@@ -14,6 +14,7 @@ class ClientsView(PermissionRequiredMixin, ListView):
     template_name = 'clients.html'
     context_object_name = 'clients'
     paginate_by = 15
+    ordering = 'name'
 
 
 class EditClient(PermissionRequiredMixin, UpdateView):

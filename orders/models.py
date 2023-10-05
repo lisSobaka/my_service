@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from datetime import datetime
+from django.utils import timezone
 from django.core.cache import cache
 from clients.models import Client
 from users.models import Employees
@@ -84,7 +84,7 @@ class Order(models.Model):
     prepayment = models.IntegerField(null=True, blank=True, verbose_name='Предоплата')
     profit = models.IntegerField(null=True, default=0, verbose_name='Профит')
     debt = models.IntegerField(null=True, default=0, verbose_name='Клиент должен')
-    date_creation = models.DateTimeField(default=datetime.now(), null=True, verbose_name='Дата создания')
+    date_creation = models.DateTimeField(default=timezone.now, null=True, verbose_name='Дата создания')
     date_completion = models.DateTimeField(null=True, verbose_name='Дата готовности')
     in_work = models.BooleanField(default=True)
 
@@ -111,7 +111,7 @@ class Payments(models.Model):
                                 verbose_name='Исполнитель')
     payment_reason = models.CharField(max_length=30, verbose_name='Тип платежа',
                                     choices=PAYMENT_REASONS)
-    date_creation = models.DateTimeField(default=datetime.now(), verbose_name='Дата платежа')
+    date_creation = models.DateTimeField(default=timezone.now, verbose_name='Дата платежа')
     income = models.IntegerField(null=True, default=0, verbose_name='Приход')
     expense = models.IntegerField(null=True, default=0, verbose_name='Расход')
     comment = models.CharField(max_length=30, verbose_name='Комментарий', blank=True, default='')
@@ -139,5 +139,5 @@ class OrderHistory(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Заказ')
     employee = models.ForeignKey(Employees, on_delete=models.PROTECT, null=True, blank=True, 
                                 verbose_name='Исполнитель')
-    date = models.DateTimeField(default=datetime.now())
+    date = models.DateTimeField(default=timezone.now)
     message = models.CharField(max_length=200, verbose_name='Сообщение')
