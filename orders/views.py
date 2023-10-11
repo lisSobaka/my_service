@@ -217,25 +217,41 @@ class PaymentsView(PermissionRequiredMixin, ListView):
     context_object_name = 'payments'
     paginate_by = 15
 
+    def get_finance_info(self):
+        #Считаю общие доход, расод и профит для отображения на главной странице платежей
+        all_income = self.queryset.aggregate(Sum('income'))['income__sum']
+        if not all_income:
+            all_income = 0
+
+        all_expense = self.queryset.aggregate(Sum('expense'))['expense__sum']
+        if not all_expense:
+            all_expense = 0
+
+        all_profit = all_income - all_expense
+
+        finance_info = {
+            'all_income': all_income,
+            'all_expense': all_expense,
+            'all_profit': all_profit
+        }
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+
+        print('$$$$$$$$$$$$$$$$$$$$$$', self.request.GET)
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self) -> QuerySet[Any]:
         # Отправляю self и название модели в функцию фильтрации, получаю фильтрованный queryset
         queryset = get_filtered_queryset(self)
+        # finance_info = self.get_finance_info()
 
         return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-
-        #Считаю общие доход, расод и профит для отображения на главной странице платежей
-        context['all_income'] = context['payments'].aggregate(Sum('income'))['income__sum']
-        if not context['all_income']:
-            context['all_income'] = 0
-        context['all_expense'] = context['payments'].aggregate(Sum('expense'))['expense__sum']
-
-        if not context['all_expense']:
-            context['all_expense'] = 0
-
-        context['all_profit'] = context['all_income'] - context['all_expense']
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!', self.request.GET)
+        paginator = super().paginate_queryset(self.get_queryset(), self.paginate_by)
+        print('@@@@@@@@@@@@@@@@@@@@@@', context['page_obj'])
 
         # Кэширую контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
         cached_context = context
@@ -244,6 +260,11 @@ class PaymentsView(PermissionRequiredMixin, ListView):
 
         # Получаю инициализированные формы для фильтров date и employee
         get_initialized_forms(self, context)
+
+        # self.request.GET = {
+        #     'page': context['page'],
+        #     'date': 
+        # }
 
         return context
 
@@ -289,7 +310,7 @@ class DeletePayment(PermissionRequiredMixin, DeleteView):
                 paid_works = Works.objects.filter(payment_id=payment.pk)
                 for work in paid_works:
                     work.paid_by_client = False
-                    work.save()
+                Works.objects.bulk_update(paid_works, ['paid_by_client'])
             OrderHistory.objects.create(
                 message = history_message,
                 order_id = payment.order_id,
@@ -363,7 +384,6 @@ class AddWork(PermissionRequiredMixin, CreateView):
             order_id = work.order_id,
             employee_id = self.request.user.pk
         )
-
         return redirect('order', self.kwargs['order_id'])
     
 
@@ -442,6 +462,5 @@ class CloseOrder(PermissionRequiredMixin, FormView):
                 )
                 work.paid_by_client = True
                 work.payment_id = payment.pk
-                print('!!!!!!!!!!!!!!!!!!', work.payment)
-                work.save()
+        Works.objects.bulk_update(works, ['paid_by_client', 'payment_id'])
         return redirect('order', order.pk)

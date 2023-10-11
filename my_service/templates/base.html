@@ -42,23 +42,26 @@
     <div>{% block content%}{% endblock content %}</div>
 
 <!-- Пагинация -->
+{% load seach_param_replace_tag %}
 <span>
-    {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; Первая</a>
-        <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
-    {% endif %}
-    <span>
-        {% for page in paginator.page_range %}
-            {% if page_obj.number == page %}
-                <b> {{page}} </b>
-            {% elif page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
-                <a href="?page={{page}}">{{page}}</a>
-            {% endif %}
-        {% endfor %}
-    </span>
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">Вперёд</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a href="?{% search_param_replace page=1 %}">&laquo; Первая</a>
+            <a href="?{% search_param_replace page=page_obj.previous_page_number %}">Назад</a>
+        {% endif %}
+        <span>
+            {% for page in paginator.page_range %}
+                {% if page_obj.number == page %}
+                    <b> {{page}} </b>
+                {% elif page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
+                    <a href="?page={{page}}">{{page}}</a>
+                {% endif %}
+            {% endfor %}
+        </span>
+        {% if page_obj.has_next %}
+            <a href="?{% search_param_replace page=page_obj.next_page_number %}">Вперёд</a>
+            <a href="?{% search_param_replace page=page_obj.paginator.num_pages %}">Последняя &raquo;</a>
+        {% endif %}
     {% endif %}
 </span>
 
