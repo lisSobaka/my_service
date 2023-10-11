@@ -1,0 +1,34 @@
+.filter_bar{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 99998;
+    background-color: rgba(0,0,0,.5);
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+
+    transition: visibility .4s, opacity .4s;
+}
+
+.filter_bar__box{
+    position: fixed;
+    left: 100vw;
+    width: 400px;
+    height: 100vh;
+    padding: 45px;
+    z-index: 1;
+    margin: 15px 15px;
+    background-color: #0A1828;
+    border-radius: 3%;
+
+    transition: ease-in-out .3s;
+}
+
+.filter_bar .filter_bar__box{
+    transform: translate(-400px);
+    transition: ease-in-out .3s;
+}

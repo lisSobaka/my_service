@@ -1,34 +1,43 @@
 {% extends "base.html" %}
 {% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/filter_bar.css' %}" />
+{% endblock head %}
 {% block title %}Заказы{% endblock title %}
 {% block header %}Заказы{% endblock header %}
 
 {% block content%}
 
-<br>
-<form action="" method="GET">
-    <input class="text-field__input" type="text" name="search" placeholder="Поиск"
-    {% if search_query %} value="{{ search_query }}">
-    {% else %} value="">
-    {% endif %}
-    <input value="&#128269;" type="submit">
-</form>
-
-
 Фильтр:
 <br>
 
-<form action="" method="get" name="date_form">
-    {% for field in filter_date_form %}
-        {{ field }}
-    {% endfor %}
+<div class="filter_bar">
+    <div class="filter_bar__box">
+        <form action="" method="get" name="date_form">
+            {% for field in filter_date_form %}
+                {{ field }}
+            {% endfor %}
 
-    {{ filter_employee_form }}
-    <br>
-    <input type="submit" value="Фильтр">
+            {{ filter_employee_form }}
+            <br>
+            <input type="submit" value="Фильтр">
+        </form>
+    </div>
+</div>
+
+
+
+Поиск:
+<form action="" method="GET">
+    <span>
+        <input class="text-field__input" type="text" name="search" placeholder="Поиск"
+        {% if search_query %} value="{{ search_query }}">
+        {% else %} value="">
+        {% endif %}
+        <input value="&#128269;" type="submit">
+
+    </span>
 </form>
-
-<hr>
 
 <div>
 <table class="orders full_width">

@@ -5,11 +5,23 @@
     box-sizing: border-box;
   }
 
+  
+body { 
+  /*font-family: sans-serif; */
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #ebebeb;
+  background-color: #0A1828;
+}
+
 .error_message{
   font-size: 12px;
   color: red;
 }
 
+
+/* Текстовые поля */
 
 .text-field {
     margin-bottom: 1rem;
@@ -23,23 +35,41 @@
  
   
   .text-field__input {
+    color: #ffffff;
     display: block;
     width: 100%;
     height: calc(2.25rem + 2px);
     margin-bottom: 0px;
     padding: 0px 0.75rem;
     font-family: inherit;
-    border: 1px dotted #b8b8b8;
+    border: 1px solid #b8b8b8;
+    background-color: #0A1828;
+    border-radius: 10px;
   }
+ 
+  
+  .text-field__input.select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  
 
   .text-field__label {
     display: block;
     margin-bottom: 0.25rem;
   }
 
-.text-field__input:focus {
-    background: transparent;
-    border: 1px solid #b8b8b8;
+.text-field__input:hover {
+    background: #0A1828;
+    border: 1px solid #ffffff;
+    outline: none;
+    box-shadow: none;
+}
+
+  .text-field__input:focus {
+    background: #0A1828;
+    border: 1px solid #66fcf1;
     outline: none;
     box-shadow: none;
 }
@@ -56,8 +86,8 @@
     transform: translateY(-50%);
     pointer-events: none;
     border: none;
-    background-color: #fff;
-    color: #757575;
+    background-color: #0A1828;
+    color: #afafaf;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     transition: top 0.1s ease-in-out, scale 0.1s ease-in-out;
@@ -77,6 +107,22 @@
     transform: translateY(-50%) scale(0.75);
   }
 
+  
+/* .text-field__input_select {
+  color: #050505;
+  display: block;
+  width: 100%;
+  height: calc(2.25rem + 2px);
+  margin-bottom: 0px;
+  padding: 0px 0.75rem;
+  font-family: inherit;
+  border: 1px solid #b8b8b8;
+  background-color: #0A1828;
+  border-radius: 10px;
+} */
+
+/* Кнопки */
+
 .form_button{
     display: block;
     width: 100%;
@@ -93,14 +139,7 @@
 
 .form_button:hover {background: linear-gradient(rgba(61, 61, 190, 0.205), rgba(142, 15, 180, 0.13));}
 
-body { 
-    /*font-family: sans-serif; */
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    color: #444444;
-    background-color: rgb(253, 253, 253);
-}
+
 
 
 .textcols {
@@ -206,4 +245,18 @@ div.scrollable {
     margin: 0;
     padding: 0;
     overflow: auto;
+}
+
+
+/* Убираю стрелки у input-number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type='number'],
+input[type="number"]:hover,
+input[type="number"]:focus {
+    appearance: none;
+    -moz-appearance: textfield;
 }
