@@ -164,6 +164,7 @@ class DeleteOperationsSalary(DeleteView):
         if self.object.reason == 'PAYOUT':
             salary_operaiton = self.object
             make_works_unpaid(salary_operaiton)
+            Payments.objects.get(pk=salary_operaiton.payment_id).delete()
         return super().form_valid(form)
     
 

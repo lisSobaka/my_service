@@ -10,9 +10,9 @@
     {% block content%}
     {% block popup %}{% endblock popup %}
 
-    <h2>Общий доход: {{ all_income }} ₽ | 
-        Общий расход: {{ all_expense }} ₽| 
-        Профит: {{ all_profit }} ₽</h2>
+    <h2>Общий доход: {{ finance_info.all_income }} ₽ | 
+        Общий расход: {{ finance_info.all_expense }} ₽| 
+        Профит: {{ finance_info.all_profit }} ₽</h2>
 
     Фильтр:
     <br>

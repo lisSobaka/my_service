@@ -49,7 +49,7 @@ def get_filtered_queryset(self):
     if self.request.GET.get('date') and self.request.GET.get('employee'):
         interval = get_interval(self)
         queryset = self.model.objects.filter(date_creation__range=(interval['start'], interval['end'])) & \
-                    self.model.objects.filter(employee_id=self.request.GET.get('employee'))
+                   self.model.objects.filter(employee_id=self.request.GET.get('employee'))
         
     elif self.request.GET.get('date'):
         interval = get_interval(self)
