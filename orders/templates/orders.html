@@ -5,14 +5,13 @@
 
 {% block content%}
 
-Поиск:
 <br>
 <form action="" method="GET">
-    <input type="text" name="search" 
+    <input class="text-field__input" type="text" name="search" placeholder="Поиск"
     {% if search_query %} value="{{ search_query }}">
     {% else %} value="">
     {% endif %}
-    <input type="submit">
+    <input value="&#128269;" type="submit">
 </form>
 
 

@@ -29,7 +29,7 @@ class OrdersView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         query = self.request.GET.get('search')
-        if query == 'search':
+        if query:
             queryset = Order.objects.filter(Q(client__tel__contains=query) | \
                                             Q(client__name__contains=query) | \
                                             Q(whats_broken__icontains=query) | \
@@ -219,39 +219,31 @@ class PaymentsView(PermissionRequiredMixin, ListView):
 
     def get_finance_info(self):
         #Считаю общие доход, расод и профит для отображения на главной странице платежей
-        all_income = self.queryset.aggregate(Sum('income'))['income__sum']
+        all_income = self.object_list.aggregate(Sum('income'))['income__sum']
         if not all_income:
             all_income = 0
 
-        all_expense = self.queryset.aggregate(Sum('expense'))['expense__sum']
+        all_expense = self.object_list.aggregate(Sum('expense'))['expense__sum']
         if not all_expense:
             all_expense = 0
 
-        all_profit = all_income - all_expense
+        all_profit = all_income + all_expense
 
         finance_info = {
             'all_income': all_income,
             'all_expense': all_expense,
             'all_profit': all_profit
         }
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-
-        print('$$$$$$$$$$$$$$$$$$$$$$', self.request.GET)
-        return super().get(request, *args, **kwargs)
+        return finance_info
 
     def get_queryset(self) -> QuerySet[Any]:
-        # Отправляю self и название модели в функцию фильтрации, получаю фильтрованный queryset
+        # Gолучаю фильтрованный queryset с учётом параметров из GET
         queryset = get_filtered_queryset(self)
-        # finance_info = self.get_finance_info()
 
         return queryset
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        print('!!!!!!!!!!!!!!!!!!!!!!!!!', self.request.GET)
-        paginator = super().paginate_queryset(self.get_queryset(), self.paginate_by)
-        print('@@@@@@@@@@@@@@@@@@@@@@', context['page_obj'])
 
         # Кэширую контекст для страницы удаления платежей. Вьюху удаляю, т.к. с ней не кэширует
         cached_context = context
@@ -261,11 +253,9 @@ class PaymentsView(PermissionRequiredMixin, ListView):
         # Получаю инициализированные формы для фильтров date и employee
         get_initialized_forms(self, context)
 
-        # self.request.GET = {
-        #     'page': context['page'],
-        #     'date': 
-        # }
-
+        # Получаю общую информацию о платежах
+        context['finance_info'] = self.get_finance_info()
+        
         return context
 
     
