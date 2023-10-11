@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load search_param_replace_tag %}
 <html>
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,7 +43,6 @@
     <div>{% block content%}{% endblock content %}</div>
 
 <!-- Пагинация -->
-{% load seach_param_replace_tag %}
 <span>
     {% if is_paginated %}
         {% if page_obj.has_previous %}
@@ -54,7 +54,7 @@
                 {% if page_obj.number == page %}
                     <b> {{page}} </b>
                 {% elif page >= page_obj.number|add:-2 and page <= page_obj.number|add:2 %}
-                    <a href="?page={{page}}">{{page}}</a>
+                    <a href="?{% search_param_replace page=page%}">{{page}}</a>
                 {% endif %}
             {% endfor %}
         </span>
