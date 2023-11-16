@@ -100,13 +100,11 @@ class FilterDateForm(forms.Form):
     start = forms.CharField(label='Начало интервала:', 
                             widget=DateInput(attrs={'disabled': True,
                                                     'hidden': True,
-                                                    'id': 'interval_start',
-                                                    'class': 'text-field__input'}))
+                                                    'id': 'interval_start',}))
     end = forms.CharField(label='Конец интервала:', 
                           widget=DateInput(attrs={'disabled': True,
                                                   'hidden': True,
-                                                  'id': 'interval_end',
-                                                  'class': 'text-field__input'}))
+                                                  'id': 'interval_end',}))
     
 
 class FilterEmployeeForm(forms.ModelForm):

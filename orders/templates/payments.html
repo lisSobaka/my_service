@@ -1,34 +1,42 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head %}
+<link rel="stylesheet" href="{% static 'css/filter_bar.css' %}" />
+
+<div id="filter">
+    <div class="filter_bar__box">
+        <b> Фильтр: </b>
+        <br>
+        <br>
+        <form action="" method="get" name="date_form">
+            {% for field in filter_date_form %}
+                <p>{{ field }}</p>
+            {% endfor %}
+            {{ filter_employee_form }}
+            <br>
+            <input class="form_button" type="submit" value="Применить">
+        </form>
+    </div>
+</div>
 
 {% endblock head %}
 {% block title %}Платежи{% endblock title %}
-{% block header %}Платежи{% endblock header %}
 
 <div>
     {% block content%}
     {% block popup %}{% endblock popup %}
 
-    <h2>Общий доход: {{ finance_info.all_income }} ₽ | 
-        Общий расход: {{ finance_info.all_expense }} ₽| 
-        Профит: {{ finance_info.all_profit }} ₽</h2>
+<span class="big_text">
 
-    Фильтр:
-    <br>
+    Общий доход: {{ finance_info.all_income }} ₽ | 
+    Общий расход: {{ finance_info.all_expense }} ₽| 
+    Профит: {{ finance_info.all_profit }} ₽
 
-    <form action="" method="get" name="date_form">
-        {% for field in filter_date_form %}
-            {{ field }}
-        {% endfor %}
-
-        {{ filter_employee_form }}
-        <br>
-        <input type="submit" value="Фильтр">
-    </form>
-
-    <hr>
-    <hr>
+        
+<button id="filter_button" class="icon_button last">
+    <img src="{% static 'icons/filter.png' %}" height="40" alt="filter">
+</button>
+</span>
     
     <table class="payments full_width">
         <thead class="payments">

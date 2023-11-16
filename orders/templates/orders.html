@@ -1,44 +1,56 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/filter_bar.css' %}" />
-{% endblock head %}
-{% block title %}Заказы{% endblock title %}
-{% block header %}Заказы{% endblock header %}
+<link rel="stylesheet" href="{% static 'css/filter_bar.css' %}" />
 
-{% block content%}
-
-Фильтр:
-<br>
-
-<div class="filter_bar">
+<div id="filter">
     <div class="filter_bar__box">
+        <b> Фильтр: </b>
+        <br>
+        <br>
         <form action="" method="get" name="date_form">
             {% for field in filter_date_form %}
-                {{ field }}
+                <p>{{ field }}</p>
             {% endfor %}
-
             {{ filter_employee_form }}
             <br>
-            <input type="submit" value="Фильтр">
+            <input class="form_button" type="submit" value="Применить">
         </form>
     </div>
 </div>
 
+{% endblock head %}
+{% block title %}Заказы{% endblock title %}
 
 
-Поиск:
-<form action="" method="GET">
-    <span>
-        <input class="text-field__input" type="text" name="search" placeholder="Поиск"
+{% block content%}
+
+<!-- КНОПКА ФИЛЬТРА -->
+<span class="big_text">
+Заказы
+<button id="filter_button" class="icon_button last">
+    <img src="{% static 'icons/filter.png' %}" height="40" alt="filter">
+</button>
+</span>
+<br>
+<br>
+
+<!-- ПОИСК -->
+<form class action="" method="GET">
+    <div>
+        <input class="text-field__input search" type="text" name="search" placeholder="Поиск"
         {% if search_query %} value="{{ search_query }}">
         {% else %} value="">
         {% endif %}
-        <input value="&#128269;" type="submit">
+        
+        <button class="icon_button last">
+            <img src="{% static 'icons/filter.png' %}" height="30" alt="filter">
+        </button>
 
-    </span>
+    </div>
 </form>
 
+<!-- ТАБЛИЦА ЗАКАЗОВ -->
 <div>
 <table class="orders full_width">
     <thead class="orders">
@@ -69,6 +81,7 @@
 </table>
 </div>
 
+<script src="{% static 'js/filter.js' %}"></script>
 <script src="{% static 'js/filter.js' %}"></script>
 
 {% endblock content %}

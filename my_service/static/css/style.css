@@ -10,9 +10,9 @@ body {
   /*font-family: sans-serif; */
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 13px;
   color: #ebebeb;
-  background-color: #0A1828;
+  background-color: #142335;
 }
 
 .error_message{
@@ -47,6 +47,10 @@ body {
     border-radius: 10px;
   }
  
+  .text-field__input.search {
+    display: inline-block;
+    width: calc(100% - 100px);
+  }
   
   .text-field__input.select {
     appearance: none;
@@ -132,13 +136,21 @@ body {
     /*box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.068);*/
     font-family: inherit;
     font-weight: 700;
-    border: 1px dotted #b8b8b8;
-    /*background-color: #34f006;*/
-    background: linear-gradient(rgba(61, 61, 190, 0.158), rgba(142, 15, 180, 0.089));
+    /* border: 1px dotted #b8b8b8; */
+    border: none;
+    border-radius: 10px;
+    background: #66fcf1;
 }
 
-.form_button:hover {background: linear-gradient(rgba(61, 61, 190, 0.205), rgba(142, 15, 180, 0.13));}
+.form_button:hover {background: #9bfff8;}
+.form_button:focus {background: #00ffee;}
 
+
+.icon_button{
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
 
 
 
@@ -245,6 +257,11 @@ div.scrollable {
     margin: 0;
     padding: 0;
     overflow: auto;
+}
+
+
+.big_text {
+  font-size: 20px;
 }
 
 

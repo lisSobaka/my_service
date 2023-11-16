@@ -30,7 +30,8 @@ class OrdersView(PermissionRequiredMixin, ListView):
     def get_queryset(self) -> QuerySet[Any]:
         query = self.request.GET.get('search')
         if query:
-            queryset = Order.objects.filter(Q(client__tel__contains=query) | \
+            queryset = Order.objects.filter(Q(id__contains=query) | \
+                                            Q(client__tel__contains=query) | \
                                             Q(client__name__contains=query) | \
                                             Q(whats_broken__icontains=query) | \
                                             Q(device_type__icontains=query) | \

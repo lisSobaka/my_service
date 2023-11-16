@@ -1,0 +1,15 @@
+<div id="filter">
+    <div class="filter_bar__box">
+        <b> Фильтр: </b>
+        <br>
+        <br>
+        <form action="" method="get" name="date_form">
+            {% for field in filter_date_form %}
+                <p>{{ field }}</p>
+            {% endfor %}
+            {{ filter_employee_form }}
+            <br>
+            <input type="submit" value="&#xF3CA">
+        </form>
+    </div>
+</div>
