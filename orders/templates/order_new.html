@@ -4,42 +4,40 @@
 {% block header %}Новый заказ{% endblock header %}
 {% block content%}
 
-    <form method="POST">
-    {% csrf_token %}
-    <div class="textcols">
+<form method="POST">
+{% csrf_token %}
+<div class="textcols">
 
-        <div class="textcols.item">
-            <h3><label>Информация о клиенте</label></h3>
-            {% for field in client_form %}
-                <div class="text-field text-field_floating">
-                    {{ field }}
-                    <label for="form.id_for_label" class="text-field__label">{{ field.label }}</label>
-                </div>
-                <div class="error_message">{{ field.errors }}</div>
-            {% endfor %}
-        </div>
-
-        <div class="textcols.item">      
-            <h3><label>Информация об устройстве</label></h3>   
-            {% for field in order_form %}
-                <div class="text-field text-field_floating">
-                    {{field}} 
-                    <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
-                    <div class="error_message">{{ field.errors }}</div>
-                </div>
-
-                {% if field.id_for_label == 'id_device_pass'%}
-                    </div>
-                        <div class="textcols.item">
-                        <h3><label>Дополнительная информация</label></h3>
-                {% endif %}
-            {% endfor %}
-            <input type="submit" value="Сохранить" class="form_button">
-            </div> 
-        </div>  
+    <div class="textcols.item">
+        <h3><label>Информация о клиенте</label></h3>
+        {% for field in client_form %}
+            <div class="text-field text-field_floating">
+                {{ field }}
+                <label for="form.id_for_label" class="text-field__label">{{ field.label }}</label>
+            </div>
+            <div class="error_message">{{ field.errors }}</div>
+        {% endfor %}
     </div>
 
-    </form>
-    
-    
-    {% endblock content %}
+    <div class="textcols.item">      
+        <h3><label>Информация об устройстве</label></h3>   
+        {% for field in order_form %}
+            <div class="text-field text-field_floating">
+                {{field}} 
+                <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
+                <div class="error_message">{{ field.errors }}</div>
+            </div>
+
+            {% if field.id_for_label == 'id_device_pass'%}
+                </div>
+                    <div class="textcols.item">
+                    <h3><label>Дополнительная информация</label></h3>
+            {% endif %}
+        {% endfor %}
+        <input class="button form_button" type="submit" value="Сохранить">
+        </div> 
+    </div>  
+</div>
+
+</form>
+{% endblock content %}

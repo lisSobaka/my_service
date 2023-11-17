@@ -15,8 +15,9 @@
                     <div class="error_message">{{field.errors}}</div>
                 {% endfor %}
             
-                <input class="form_button" type="submit" value="Добавить платёж"><br>
-                <button class="form_button"><a href="{% url 'employee_salary' employee.pk %}">Передумал</a></button>
+                <input class="button form_button" type="submit" value="Добавить платёж"><br>
+                <input class="button form_button" type="button" 
+                    onclick="window.location.href = '{% url 'employee_salary' employee.pk %}';" value="Отмена">
             </form>
         </div>
     </div>

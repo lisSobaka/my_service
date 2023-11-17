@@ -11,13 +11,15 @@
                 {{ field }}
                 <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
             </div>
-                <div class="error_message">{{field.errors}}</div>
+            <div class="error_message">{{field.errors}}</div>
             {% endfor %}
-            
-            <input type="submit" value="Сохранить услугу" class="form_button"> <br>
-            <button class="form_button"><a href="{% url 'order' order.pk %}">Передумал</a></button>
+
+            <input class="button form_button" type="submit" value="Сохранить услугу"> <br>
+            <input class="button form_button" type="button"
+                onclick="window.location.href = '{% url 'order' order.pk %}';" value="Отмена"></p>
+
         </form>
     </div>
 </div>
-    
+
 {% endblock popup %}

@@ -14,7 +14,7 @@
             {% endfor %}
             {{ filter_employee_form }}
             <br>
-            <input class="form_button" type="submit" value="Применить">
+            <input class="button form_button" type="submit" value="Применить">
         </form>
     </div>
 </div>
@@ -28,28 +28,33 @@
 <!-- КНОПКА ФИЛЬТРА -->
 <span class="big_text">
 Заказы
-<button id="filter_button" class="icon_button last">
-    <img src="{% static 'icons/filter.png' %}" height="40" alt="filter">
-</button>
+
 </span>
 <br>
 <br>
 
 <!-- ПОИСК -->
-<form class action="" method="GET">
-    <div>
-        <input class="text-field__input search" type="text" name="search" placeholder="Поиск"
-        {% if search_query %} value="{{ search_query }}">
-        {% else %} value="">
-        {% endif %}
-        
-        <button class="icon_button last">
-            <img src="{% static 'icons/filter.png' %}" height="30" alt="filter">
-        </button>
-
+<div class="search_container">
+    <div class="search_container-search">
+        <form class action="" method="GET">
+            <input class="text-field__input search" type="text" name="search" placeholder="Поиск"
+            {% if search_query %} value="{{ search_query }}">
+            {% else %} value="">
+            {% endif %}
+            
+            <button class="icon_button last">
+                <img src="{% static 'icons/search.png' %}" height="35" alt="filter">
+            </button>
+        </form>
     </div>
-</form>
 
+    <div class="search_container-icons">
+        <button id="filter_button" class="icon_button">
+            <img src="{% static 'icons/filter.png' %}" height="40" alt="filter">
+        </button>
+    </div>
+</div>
+<br><br>
 <!-- ТАБЛИЦА ЗАКАЗОВ -->
 <div>
 <table class="orders full_width">
