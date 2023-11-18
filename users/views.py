@@ -5,10 +5,12 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
 from .forms import RegisterUserForm, LoginUserForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse_lazy
 from .models import Employees
-from django.contrib.auth import login
+from django.contrib.auth import login 
+from salary.models import Salary
 
 
 class RegisterUser(CreateView):
@@ -23,10 +25,10 @@ class RegisterUser(CreateView):
             user.is_active = False
             user.save()
             Group.objects.get_or_create(name='Repairer')
+
             user.groups.add(Group.objects.get(name='Repairer'))
 
             # login(request, user)
-
             return render(request, self.success_url)
         
         context = {'form': form}

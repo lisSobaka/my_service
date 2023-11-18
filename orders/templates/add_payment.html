@@ -1,7 +1,6 @@
 {% extends "order.html" %}
 {% block popup %}
 
-{% if perms.clients.change_client %}
 <div class="popup open">
     <div class="popup__box">
         <h2>Добавление платежа</h2>
@@ -22,5 +21,4 @@
         </form>
     </div>
 </div>
-{% endif %}
 {% endblock popup %}

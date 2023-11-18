@@ -7,29 +7,31 @@
 {% block popup %}{% endblock popup %}
 
 <h2>Заработная плата: {{ salary_amount }} рублей </h2>
-<input class="button" type="button" 
+{% if perms.add_salary %}
+    <input class="button" type="button" 
 	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=payout';" 
     value="Выплатить ЗП">
-<br>
+    <br>
 
-<input class="button inline_button" type="button" 
-	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=bonus';" 
-    value="Премия">
+    <input class="button inline_button" type="button" 
+        onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=bonus';" 
+        value="Премия">
 
-    
-<input class="button inline_button" type="button" 
-onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=penalty';" 
-value="Штраф">
+        
+    <input class="button inline_button" type="button" 
+    onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=penalty';" 
+    value="Штраф">
 
 
-<input class="button inline_button" type="button" 
-	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=interim_payment';" 
-    value="Промежуточная выплата">
+    <input class="button inline_button" type="button" 
+        onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=interim_payment';" 
+        value="Промежуточная выплата">
     
 <br><br>
+{% endif %}
+
 <table class="full_width">
     <thead>
-        <th>№</th>
         <th>Дата</th>
         <th>Сумма</th>
         <th>Номер заказа</th>
@@ -37,13 +39,12 @@ value="Штраф">
         <th>Услуга в заказе</th>
         <th>Комментарий</th>
         <th>Выплчено?</th>
-        <th>Удалить</th>
+        <th></th>
     </thead>
 
     {% for object in salary %}
         <tbody>
             <tr>
-                <td>{{ object.pk }}</td>
                 <td>{{ object.date }}</td>
                 <td>{{ object.amount }}</td>
                 <td>{% if object.order_id %}

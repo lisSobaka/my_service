@@ -20,7 +20,7 @@
 .popup__box{
     min-width: 500px;
     max-width: 1000px;
-    padding: 10%;
+    padding: 50px;
     z-index: 1;
     margin: 15px 15px;
     background-color: #0A1828;

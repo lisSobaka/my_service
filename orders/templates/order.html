@@ -254,11 +254,11 @@
                     <thead>
                         <th colspan="2" align="left"><h3>Информация о клиенте
                             {% if perms.clients.change_client %}
-                            <button class="icon_button last">
-                                <a href="{% url 'edit_client' client.pk %}?order_id={{order.pk}}">
-                                    <img src="{% static 'icons/edit2.png' %}" height="30">
-                                </a>
-                            </button>
+                                <button class="icon_button last">
+                                    <a href="{% url 'edit_client' client.pk %}?order_id={{order.pk}}">
+                                        <img src="{% static 'icons/edit2.png' %}" height="30">
+                                    </a>
+                                </button>
                             {% endif %}
                         </h3></th>
                     </thead>

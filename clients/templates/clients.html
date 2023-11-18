@@ -16,13 +16,9 @@
         <th>Адрес</th>
         <th>Комментарий</th>
         <th>Источник</th>
-        <th>Изменить</th>
-        <th>Удалить</th>
+        <th></th>
     </thead>
     
-
-
-
     {% for client in clients %}
         <tbody>
             <tr>
@@ -33,14 +29,23 @@
                 <td>{{ client.adress }}</td>
                 <td>{{ client.comment_client }}</td>
                 <td>{{ client.source }}</td>
-                <td> {% if perms.clients.change_client %}
-                    <a href="{% url 'edit_client' client.id %}"> Изменить </a>
-                {% endif %}
-                </td>
-                <td>
-                {% if perms.clients.delete_client %}
-                    <a href="{% url 'clients' %}?action=client_delete&client_id={{client.id}}"> Удалить </a>
-                {% endif %}
+                <td> 
+                    {% if perms.clients.delete_client %}
+                        <button class="icon_button last">
+                            <a href="{% url 'clients' %}?action=client_delete&client_id={{client.id}}">
+                                <img src="{% static 'icons/delete.png' %}" height="25">
+                            </a>
+                        </button>
+                    {% endif %}
+
+                    {% if perms.clients.change_client %}
+                        <button class="icon_button last">
+                            <a href="{% url 'edit_client' client.id %}">
+                                <img src="{% static 'icons/edit2.png' %}" height="30">
+                            </a>
+                        </button>
+                    {% endif %}
+
                  </td>
             </tr>
         </tbody>

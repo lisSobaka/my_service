@@ -105,6 +105,7 @@ class EditOrder(PermissionRequiredMixin, UpdateView):
             context['form'] = OrderForm(instance=self.object)
         else:
             context['form'] = kwargs['form']
+        print(context)
         return context
     
 
@@ -161,7 +162,7 @@ class CreateOrder(PermissionRequiredMixin, TemplateView):
     
 
 class AddPayment(PermissionRequiredMixin, CreateView):
-    permission_required = 'orders.create_payment'
+    permission_required = 'orders.add_payments'
     login_url = reverse_lazy('login')
     model = Payments
     template_name = 'add_payment.html'

@@ -1,6 +1,7 @@
 from typing import Any
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, DeleteView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from users.models import Employees
 from orders.models import Payments
 from django.urls import reverse, reverse_lazy
@@ -57,7 +58,9 @@ class EmployeeSalary(ListView):
         return context
     
 
-class OperationsSalary(CreateView):
+class OperationsSalary(PermissionRequiredMixin, CreateView):
+    permission_required = 'salary.add_salary'
+    login_url = reverse_lazy('login')
     model = Salary
     template_name = 'operations_salary.html'
     form_class = SalaryForm
@@ -139,7 +142,9 @@ class OperationsSalary(CreateView):
         return super().form_valid(form)
     
 
-class DeleteOperationsSalary(DeleteView):
+class DeleteOperationsSalary(PermissionRequiredMixin, DeleteView):
+    permission_required = 'salary.delete_salary'
+    login_url = reverse_lazy('login')
     model = Salary
     pk_url_kwarg = 'operation_id'
     template_name = 'delete_confirmation.html'

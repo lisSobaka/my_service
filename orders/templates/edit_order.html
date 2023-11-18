@@ -1,7 +1,6 @@
 {% extends "order.html" %}
 {% block popup %}
 
-{% if perms.clients.change_order %}
 <div class="popup open" id="edit_order_popup">
     <div class="popup__box">
         <h2>Изменение заказа №{{order.pk}} </h2>
@@ -30,7 +29,5 @@
     </div>
     </form>
 </div>
-</div>
-{% endif %}
 
 {% endblock popup %}

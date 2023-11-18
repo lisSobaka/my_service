@@ -47,7 +47,7 @@
             <th width="15%">Основание</th>
             <th width="15%">Сотрудник</th>
             <th width="15%">Описание</th>
-            <th width="5%">Удалить</th>
+            <th width="5%"></th>
         </thead>
 
         <tbody>
@@ -63,7 +63,15 @@
                 <td>{{payment.get_payment_reason_display}}</td>
                 <td>{{payment.employee.get_full_name}}</td>
                 <td>{{payment.comment}}</td>
-                <td> <a href="{% url 'delete_payment' payment.id %}">&#10060;</a></td>
+                <td>                    
+                    {% if perms.orders.delete_payment %}
+                        <button class="icon_button last">
+                            <a href="{% url 'delete_payment' payment.id %}">
+                                <img src="{% static 'icons/delete.png' %}" height="25">
+                            </a>
+                        </button>
+                    {% endif %} 
+                </td>
             </tr>
             {% endfor %}
         </tbody>
