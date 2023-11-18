@@ -15,9 +15,11 @@
         <hr>
         <div class="scrollable">
         {% for message in history %}
+            <div class="grey_text">
             <b>{{ message.message }}</b> <br> 
             <font size="2">{{ message.employee.get_full_name }}</font> <br>
             <font size="2">{{ message.date }}</font>
+            </div>
             <hr>
         {% endfor %}
         </div>
@@ -27,7 +29,7 @@
             {% csrf_token %}
             {{ order_history_form.message }}
             <br>
-                <input class="button form_button" type="submit" value="Сохранить">
+                <input class="button order_history_button" type="submit" value="Сохранить">
             {% endif %}
         </form>
         <hr>

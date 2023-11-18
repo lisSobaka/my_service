@@ -74,7 +74,7 @@
             <tr class="selectable" onclick="document.location = '{{order.get_absolute_url}}';">
                 <td>{{ order.id }}</td>
                 <td>{{ order.client.name }}</td>
-                <td>{{ order.client.tel }}</td>
+                <td><a href="tel:{{ order.client.tel }}">{{ order.client.tel }}</a></td>
                 <td>{{ order.device_type }}</td>
                 <td>{{ order.device_brand }}</td>
                 <td>{{ order.device_model }}</td>
