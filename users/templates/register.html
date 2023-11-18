@@ -1,8 +1,18 @@
-{% extends "base.html" %}
-{% block title %} Регистрация {% endblock title %}
-{% block content %}
+<!DOCTYPE html>
+{% load static %}
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
-{% block popup %}
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/popup.css' %}" />
+
+    <title>Авторизация</title>
+</head>
+
+<body>
     <div class="popup open">
         <div class="popup__box">
             <h2> Регистрация </h2>
@@ -18,17 +28,10 @@
                 <br>
                 <button class="button form_button" type="submit">Регистрация</button>
             </form>
+            <br>
+
+            <input class="button form_button" type="button" 
+            onclick="window.location.href = '{% url 'login' %}';" value="Вход">
         </div>
     </div>
-
-{% endblock popup %}
-
-{% endblock %}
-
-
-<form method="post">
-    {% csrf_token %}    
-    {{ form.non_field_errors }}
-    
-    <button class="button type="submit">Войти</button>
-</form>
+</body>
