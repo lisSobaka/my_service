@@ -5,12 +5,23 @@
     box-sizing: border-box;
   }
 
+  
+body { 
+  /*font-family: sans-serif; */
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: #ebebeb;
+  background-color: #142335;
+}
+
 .error_message{
   font-size: 12px;
   color: red;
 }
 
 
+/* Текстовые поля */
 .text-field {
     margin-bottom: 1rem;
   }
@@ -23,23 +34,72 @@
  
   
   .text-field__input {
+    color: #ffffff;
     display: block;
     width: 100%;
     height: calc(2.25rem + 2px);
     margin-bottom: 0px;
     padding: 0px 0.75rem;
     font-family: inherit;
-    border: 1px dotted #b8b8b8;
+    border: 1px solid #b8b8b8;
+    background-color: #0A1828;
+    border-radius: 10px;
   }
+ 
+
+  .text-field__input.search {
+    display: inline-block;
+    width: calc(100% - 50px);
+  }
+  
+  .text-field__input.select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+/* Поиск */
+.search_container {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* gap: 10px; */
+  width: 100%;
+}
+
+.search_container-search{
+  flex-direction: column;
+  width: calc(100% - 80px);
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.search_container-icons{
+  flex-direction: column;
+  width: 50px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+
+  
 
   .text-field__label {
     display: block;
     margin-bottom: 0.25rem;
   }
 
-.text-field__input:focus {
-    background: transparent;
-    border: 1px solid #b8b8b8;
+.text-field__input:hover {
+    background: #0A1828;
+    border: 1px solid #ffffff;
+    outline: none;
+    box-shadow: none;
+}
+
+  .text-field__input:focus {
+    background: #0A1828;
+    border: 1px solid #66fcf1;
     outline: none;
     box-shadow: none;
 }
@@ -56,8 +116,8 @@
     transform: translateY(-50%);
     pointer-events: none;
     border: none;
-    background-color: #fff;
-    color: #757575;
+    background-color: #0A1828;
+    color: #afafaf;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     transition: top 0.1s ease-in-out, scale 0.1s ease-in-out;
@@ -77,31 +137,58 @@
     transform: translateY(-50%) scale(0.75);
   }
 
-.form_button{
+  
+/* .text-field__input_select {
+  color: #050505;
+  display: block;
+  width: 100%;
+  height: calc(2.25rem + 2px);
+  margin-bottom: 0px;
+  padding: 0px 0.75rem;
+  font-family: inherit;
+  border: 1px solid #b8b8b8;
+  background-color: #0A1828;
+  border-radius: 10px;
+} */
+
+/* Кнопки */
+
+.button{
     display: block;
-    width: 100%;
-    height: calc(2.25rem + 2px);
+    height: calc(2rem + 2px);
     margin-bottom: 0px;
     padding: 0px 0.75rem;
     /*box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.068);*/
     font-family: inherit;
     font-weight: 700;
-    border: 1px dotted #b8b8b8;
-    /*background-color: #34f006;*/
-    background: linear-gradient(rgba(61, 61, 190, 0.158), rgba(142, 15, 180, 0.089));
+    /* border: 1px dotted #b8b8b8; */
+    border: none;
+    border-radius: 10px;
+    background: #66fcf1;
+    width: initial;
+    text-align: center;
+    padding: 5px 25px;
+    margin-right: 5px;
 }
 
-.form_button:hover {background: linear-gradient(rgba(61, 61, 190, 0.205), rgba(142, 15, 180, 0.13));}
+.button:hover {background: #9bfff8;}
+.button:focus {background: #00ffee;}
 
-body { 
-    /*font-family: sans-serif; */
-    font-family: 'Open Sans', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    color: #444444;
-    background-color: rgb(253, 253, 253);
+
+.icon_button{
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
+
+.form_button{
+  width: 100%;
+}
+
+.inline_button{
+  display: inline;
+}
 
 .textcols {
     display: flex;
@@ -206,4 +293,53 @@ div.scrollable {
     margin: 0;
     padding: 0;
     overflow: auto;
+}
+
+
+.big_text {
+  font-size: 20px;
+}
+
+
+/* Убираю стрелки у input-number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type='number'],
+input[type="number"]:hover,
+input[type="number"]:focus {
+    appearance: none;
+    -moz-appearance: textfield;
+}
+
+
+a {
+  outline: none;
+  text-decoration: none;
+  padding: 2px 1px 0;
+}
+
+a:link {
+  color: #66fcf1;
+}
+
+a:visited {
+  color: #66fcf1;
+}
+
+a:focus {
+  border-bottom: 1px solid;
+  background: #1e2a38;
+}
+
+a:hover {
+  border-bottom: 1px solid;
+  background: #1e2a38;
+}
+
+a:active {
+  background: #1e2a38;
+  color: #66fcf1;
 }

@@ -1,35 +1,61 @@
 {% extends "base.html" %}
 {% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/filter_bar.css' %}" />
+
+<div id="filter">
+    <div class="filter_bar__box">
+        <b> Фильтр: </b>
+        <br>
+        <br>
+        <form action="" method="get" name="date_form">
+            {% for field in filter_date_form %}
+                <p>{{ field }}</p>
+            {% endfor %}
+            {{ filter_employee_form }}
+            <br>
+            <input class="button form_button" type="submit" value="Применить">
+        </form>
+    </div>
+</div>
+
+{% endblock head %}
 {% block title %}Заказы{% endblock title %}
-{% block header %}Заказы{% endblock header %}
+
 
 {% block content%}
 
+<!-- КНОПКА ФИЛЬТРА -->
+<span class="big_text">
+Заказы
+
+</span>
 <br>
-<form action="" method="GET">
-    <input class="text-field__input" type="text" name="search" placeholder="Поиск"
-    {% if search_query %} value="{{ search_query }}">
-    {% else %} value="">
-    {% endif %}
-    <input value="&#128269;" type="submit">
-</form>
-
-
-Фильтр:
 <br>
 
-<form action="" method="get" name="date_form">
-    {% for field in filter_date_form %}
-        {{ field }}
-    {% endfor %}
+<!-- ПОИСК -->
+<div class="search_container">
+    <div class="search_container-search">
+        <form class action="" method="GET">
+            <input class="text-field__input search" type="text" name="search" placeholder="Поиск"
+            {% if search_query %} value="{{ search_query }}">
+            {% else %} value="">
+            {% endif %}
+            
+            <button class="icon_button last">
+                <img src="{% static 'icons/search.png' %}" height="35" alt="filter">
+            </button>
+        </form>
+    </div>
 
-    {{ filter_employee_form }}
-    <br>
-    <input type="submit" value="Фильтр">
-</form>
-
-<hr>
-
+    <div class="search_container-icons">
+        <button id="filter_button" class="icon_button">
+            <img src="{% static 'icons/filter.png' %}" height="40" alt="filter">
+        </button>
+    </div>
+</div>
+<br><br>
+<!-- ТАБЛИЦА ЗАКАЗОВ -->
 <div>
 <table class="orders full_width">
     <thead class="orders">
@@ -60,6 +86,7 @@
 </table>
 </div>
 
+<script src="{% static 'js/filter.js' %}"></script>
 <script src="{% static 'js/filter.js' %}"></script>
 
 {% endblock content %}

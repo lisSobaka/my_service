@@ -1,17 +1,42 @@
 {% extends "base.html" %}
+{% block title %} Авторизация {% endblock title %}
+{% block content %}
+
+{% block popup %}
+    <div class="popup open">
+        <div class="popup__box">
+            <h2> Авторизация </h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="text-field text-field_floating">
+                        {{ field }}
+                        <label for="{{ field.id_for_label }}" class="text-field__label"> {{ field.label }} </label>
+                    </div>
+                    <div class="error_message">{{ field.errors }}</div>
+                {% endfor %}
+                <br>
+                <button class="button form_button" type="submit">Войти</button>
+            </form>
+            <br>
+           
+            
+            <input class="button form_button" type="button" 
+            onclick="window.location.href = '{% url 'register' %}';" value="Регистрация">
 
 
-{% block content%}
-Пользователь: {{user}}
+            <h2> ДЕМО </h2>
+                
+            <input class="button form_button" type="button" 
+            onclick="window.location.href = '{% url 'login' %}';" value="Вход под администратором">
+            <br>
+            <input class="button form_button" type="button" 
+            onclick="window.location.href = '{% url 'login' %}';" value="Вход под мастером">
 
-<form method="post">
-    {% csrf_token %}    
-    {{ form.non_field_errors }}
-    {% for field in form %}
-        <p><label for="field.id_for_label" class="auth_form_label">{{field.label}}</label> {{ field }}</p>
-        {{ field.errors }}
-    {% endfor %}
-    <button type="submit">Войти</button>
-</form>
+        
+        </div>
+    </div>
 
+{% endblock popup %}
 {% endblock %}

@@ -1,35 +1,36 @@
 {% extends "order.html" %}
-{% block popup %} 
+{% block popup %}
 
 {% if perms.clients.change_order %}
-    <div class="popup open" id="edit_order_popup">
-        <div class="popup__box">
-            <h2>Изменение заказа №{{order.pk}} </h2>
-            <form action="{% url 'edit_order' order.pk %}" method="POST">
-                {% csrf_token %}
-                <div class="textcols">
-                    <div class="textcols.item">      
-                        <h3><label>Информация об устройстве</label></h3>   
-                        {% for field in form %}
-                            <div class="text-field text-field_floating">
-                                {{ field }} 
-                                <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
-                            </div>
-                            <div class="error_message">{{ field.errors }}</div>
-                            {% if field.id_for_label == 'id_device_pass'%}
-                                </div>
-                                    <div class="textcols.item">
-                                    <h3><label>Дополнительная информация</label></h3>
-                            {% endif %}
-                        {% endfor %}
-                        <input type="submit" value="Сохранить" class="form_button"><br>
-                        <button class="form_button"><a href="{% url 'order' order.pk %}">Передумал</a></button>
-                        </div> 
-                    </div>  
+<div class="popup open" id="edit_order_popup">
+    <div class="popup__box">
+        <h2>Изменение заказа №{{order.pk}} </h2>
+        <form action="{% url 'edit_order' order.pk %}" method="POST">
+            {% csrf_token %}
+            <div class="textcols">
+                <div class="textcols.item">
+                    <h3><label>Информация об устройстве</label></h3>
+                    {% for field in form %}
+                    <div class="text-field text-field_floating">
+                        {{ field }}
+                        <label for="field.id_for_label" class="text-field__label">{{ field.label }}</label>
+                    </div>
+                    <div class="error_message">{{ field.errors }}</div>
+                    {% if field.id_for_label == 'id_device_pass'%}
                 </div>
-            </form>
-        </div>
+                <div class="textcols.item">
+                    <h3><label>Дополнительная информация</label></h3>
+                    {% endif %}
+                    {% endfor %}
+                    <input class="button form_button" type="submit" value="Сохранить"><br>
+                    <input class="button form_button" type="button"
+                        onclick="window.location.href = '{% url 'order' order.pk %}';" value="Отмена">
+                </div>
+            </div>
     </div>
+    </form>
+</div>
+</div>
 {% endif %}
 
 {% endblock popup %}

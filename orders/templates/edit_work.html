@@ -5,16 +5,18 @@
 
 <div class="popup open">
     <div class="popup__box">
+        <h2> Изменение услуги </h2>
         <form method="POST">
             {% csrf_token %}
-
             {% for field in form %}
                 <p><label for="field.id_for_label">{{ field.label }}</label> <br>{{ field }}</p>
                 {{field.errors}}
             {% endfor %}
 
-            <input type="submit" value="Сохранить услугу">
-            <button type="button"><a href="{% url 'order' order.pk %}">Передумал</a></button>
+            <input class="button form_button" type="submit" value="Сохранить услугу">
+            <br>
+            <input class="button form_button" type="button" 
+                onclick="window.location.href = '{% url 'order' order.pk %}';" value="Отмена">
         </form>
     </div>
 </div>

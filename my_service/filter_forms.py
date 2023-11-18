@@ -95,7 +95,8 @@ class FilterDateForm(forms.Form):
                              required=False,
                              choices=FILTER_SELECTIONS,
                              widget=forms.Select(attrs={'id': 'date_selector',
-                                                        'onchange': 'showHideCalendar(this.value)',}))
+                                                        'onchange': 'showHideCalendar(this.value)',
+                                                        'class': 'text-field__input'}))
     start = forms.CharField(label='Начало интервала:', 
                             widget=DateInput(attrs={'disabled': True,
                                                     'hidden': True,
@@ -115,4 +116,4 @@ class FilterEmployeeForm(forms.ModelForm):
                                       required=False,
                                       empty_label='Выбрать сотрудника',
                                       queryset=Employees.objects.all(),
-                                      widget=forms.Select())
+                                      widget=forms.Select(attrs={'class': 'text-field__input'}))

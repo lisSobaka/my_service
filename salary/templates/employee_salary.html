@@ -7,23 +7,25 @@
 {% block popup %}{% endblock popup %}
 
 <h2>Заработная плата: {{ salary_amount }} рублей </h2>
-<button>
-    <a href="{% url 'operations_salary' employee.pk %}?type=payout">Выплатить ЗП</a>
-</button>
+<input class="button" type="button" 
+	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=payout';" 
+    value="Выплатить ЗП">
 <br>
 
-<button>
-    <a href="{% url 'operations_salary' employee.pk %}?type=bonus">Премия</a>
-</button>
+<input class="button inline_button" type="button" 
+	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=bonus';" 
+    value="Премия">
 
-<button>
-    <a href="{% url 'operations_salary' employee.pk %}?type=penalty">Штраф</a>
-</button>
+    
+<input class="button inline_button" type="button" 
+onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=penalty';" 
+value="Штраф">
 
-<button>
-    <a href="{% url 'operations_salary' employee.pk %}?type=interim_payment">Промежуточная выплата</a>
-</button>
 
+<input class="button inline_button" type="button" 
+	onclick="window.location.href = '{% url 'operations_salary' employee.pk %}?type=interim_payment';" 
+    value="Промежуточная выплата">
+    
 <br><br>
 <table class="full_width">
     <thead>

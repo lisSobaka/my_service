@@ -9,8 +9,9 @@
         <form method="POST">
             {% csrf_token %}
             {{ form }}
-            <input class="form_button" type="submit" value="Да, рил"> <br>
-            <button type="button" class="form_button"><a href={{cancel_button}}>Передумал</a></button>
+            <input class="button form_button" type="submit" value="Да, рил"> <br>
+            <input class="button form_button" type="button" 
+                onclick="window.location.href = '{{cancel_button}}';" value="Отмена">
         </form>
     </div>
 </div>

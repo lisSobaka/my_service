@@ -35,7 +35,7 @@ class OrderForm(forms.ModelForm):
                                                     'placeholder': 'price'}),
             'prepayment': forms.NumberInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'prepayment'}),
-            'employee': forms.Select(attrs={'class': 'text-field__input', 
+            'employee': forms.Select(attrs={'class': 'text-field__input select', 
                                                     'placeholder': 'employee'}),
             'note_hidden': forms.TextInput(attrs={'class': 'text-field__input', 
                                                     'placeholder': 'note_hidden'}),
