@@ -1,12 +1,22 @@
-{% extends "base.html" %}
-{% block title %} Авторизация {% endblock title %}
-{% block content %}
+<!DOCTYPE html>
+{% load static %}
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 
-{% block popup %}
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/popup.css' %}" />
+
+    <title>Авторизация</title>
+</head>
+
+<body>
     <div class="popup open">
         <div class="popup__box">
-            <h2> Авторизация </h2>
-            <form method="post">
+            <center><h2> Авторизация </h2></center>
+            <form method="post" id="autorization_form">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 {% for field in form %}
@@ -16,27 +26,28 @@
                     </div>
                     <div class="error_message">{{ field.errors }}</div>
                 {% endfor %}
-                <br>
-                <button class="button form_button" type="submit">Войти</button>
+                <input type="hidden" name="demo" value="">
+                <button form="autorization_form" class="button form_button" type="submit">Войти</button>
             </form>
             <br>
-           
-            
-            <input class="button form_button" type="button" 
-            onclick="window.location.href = '{% url 'register' %}';" value="Регистрация">
-
-
-            <h2> ДЕМО </h2>
-                
-            <input class="button form_button" type="button" 
-            onclick="window.location.href = '{% url 'login' %}';" value="Вход под администратором">
             <br>
             <input class="button form_button" type="button" 
-            onclick="window.location.href = '{% url 'login' %}';" value="Вход под мастером">
-
-        
+            onclick="window.location.href = '{% url 'register' %}';" value="Регистрация">
+            <br>
+            <center><h2> Демо </h2></center>
+            <form method="post" id="login_admin">
+                {% csrf_token %}
+                <input type="hidden" name="demo" value="demo_login_admin">
+                <input form="login_admin" type="submit" class="button form_button" 
+                    value="Вход под администратором">
+            </form>
+            <br>
+            <form method="post" id="login_employee">
+                {% csrf_token %}
+                <input type="hidden" name="demo" value="demo_login_employee">
+                <input form="login_employee" type="submit" class="button form_button" 
+                    value="Вход под мастером (ограниченные права)">
+            </form>
         </div>
     </div>
-
-{% endblock popup %}
-{% endblock %}
+</body>

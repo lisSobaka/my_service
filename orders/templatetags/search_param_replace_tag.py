@@ -1,8 +1,7 @@
 from django import template
 
+# Сохранение поисковых запросов в адресной строке при перемещении по страницам с пагинацией
 register = template.Library()
-
-
 @register.simple_tag(takes_context=True)
 def search_param_replace(context, **kwargs):
     params = context['request'].GET.copy()
@@ -14,21 +13,3 @@ def search_param_replace(context, **kwargs):
         del params[key]
     
     return params.urlencode()
-
-
-'''
-<QueryDict: {'date': ['year'], 'employee': [''], 'page': ['2']}>
-
-
-for key, value in params:
-    if value == "":
-        del params[key]
-
-for key in
-    for key, value in params.items():
-        if key not value:
-            del params[key]
-        
-
-
-'''
