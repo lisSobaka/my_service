@@ -76,7 +76,7 @@ class OrderHistoryForm(forms.ModelForm):
         fields = ['message', ]
         widgets = {
             'message': forms.Textarea(attrs={'class': 'order_containers-history history_message',
-                                             'rows': 5})
+                                             'rows': 5, 'placeholder': 'Введите комментарий'})
         }
 
 
